@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelo UF - Resolución 04240 de 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --panel-bg: rgba(14, 20, 36, 0.85);
+      --panel-border: #1f2d4d;
+      --cyan-neon: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --pink-neon: #ff0055;
+      --pink-glow: rgba(255, 0, 85, 0.35);
+      --yellow-neon: #ffe600;
+      --green-neon: #00ff66;
+      --text-main: #e2e8f0;
+      --text-muted: #8fa0c2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 30px 30px, 30px 30px;
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* HEADER - Estilo Manguera LED */
+    header {
+      background: var(--panel-bg);
+      border: 2px solid var(--cyan-neon);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 0 12px var(--cyan-glow), inset 0 0 12px var(--cyan-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan-neon), transparent);
+      animation: scanline 4s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .main-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.1rem, 2.3vw, 1.45rem);
+      font-weight: 700;
+      color: var(--cyan-neon);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .subtitle-res {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      color: var(--text-main);
+      margin-top: 8px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+    }
+
+    .art-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--yellow-neon);
+      margin-top: 10px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(255, 230, 0, 0.3);
+    }
+
+    /* TOP TABS NAVIGATION */
+    .view-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .btn-tab {
+      background: transparent;
+      border: 2px solid var(--cyan-neon);
+      color: var(--cyan-neon);
+      padding: 10px 24px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px transparent, inset 0 0 8px transparent;
+      transition: all 0.25s ease;
+    }
+
+    .btn-tab.active, .btn-tab:hover {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--cyan-neon);
+      box-shadow: 0 0 12px var(--cyan-glow), inset 0 0 12px var(--cyan-glow);
+      text-shadow: 0 0 8px var(--cyan-neon);
+    }
+
+    .btn-tab.quiz-tab {
+      border-color: var(--pink-neon);
+      color: var(--pink-neon);
+    }
+
+    .btn-tab.quiz-tab.active, .btn-tab.quiz-tab:hover {
+      background: rgba(255, 0, 85, 0.1);
+      color: var(--pink-neon);
+      box-shadow: 0 0 12px var(--pink-glow), inset 0 0 12px var(--pink-glow);
+      text-shadow: 0 0 8px var(--pink-neon);
+    }
+
+    /* BREADCRUMB / REGRESAR */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 45px;
+    }
+
+    .btn-return {
+      background: rgba(255, 0, 85, 0.05);
+      border: 2px solid var(--pink-neon);
+      color: var(--pink-neon);
+      padding: 8px 18px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      letter-spacing: 1px;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 6px rgba(255, 0, 85, 0.2), inset 0 0 6px rgba(255, 0, 85, 0.2);
+    }
+
+    .btn-return:hover {
+      background: rgba(255, 0, 85, 0.15);
+      box-shadow: 0 0 12px var(--pink-glow), inset 0 0 12px var(--pink-glow);
+      text-shadow: 0 0 5px var(--pink-neon);
+    }
+
+    .status-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: rgba(8, 12, 24, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* GRID CASILLAS - MANGUERA NEÓN PLEX */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .neon-card {
+      background: var(--panel-bg);
+      /* Borde simulando el tubo físico de la manguera LED */
+      border: 2px solid var(--card-color, var(--cyan-neon)); 
+      border-radius: 14px; /* Más redondeado para el efecto tubo */
+      /* Resplandor exterior e interior suave (amigable a la vista) */
+      box-shadow: 
+        0 0 8px var(--card-color, var(--cyan-glow)), 
+        inset 0 0 8px var(--card-color, var(--cyan-glow));
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 125px;
+    }
+
+    .neon-card:hover {
+      transform: translateY(-4px);
+      /* Aumentar el brillo al interactuar, sin cegar */
+      box-shadow: 
+        0 0 16px var(--card-color, var(--cyan-glow)), 
+        inset 0 0 12px var(--card-color, var(--cyan-glow));
+      background: rgba(18, 28, 52, 0.95);
+    }
+
+    .neon-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.4;
+    }
+
+    .neon-card .card-hint {
+      font-size: 0.85rem;
+      color: var(--card-color, var(--cyan-neon));
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* DETALLE CONTENIDO - ESTILO PLEX */
+    .detail-view {
+      background: var(--panel-bg);
+      border: 2px solid var(--cyan-neon);
+      border-radius: 14px;
+      padding: 35px;
+      box-shadow: 0 0 12px var(--cyan-glow), inset 0 0 12px var(--cyan-glow);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-view .category-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--pink-neon);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+
+    .detail-view h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      color: #ffffff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .detail-view .body-content {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      line-height: 1.8;
+      border-left: 3px solid var(--yellow-neon);
+      padding-left: 20px;
+      background: rgba(0, 0, 0, 0.25);
+      padding-top: 15px;
+      padding-bottom: 15px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* SECCION DE PRINCIPIOS */
+    .principles-section {
+      background: rgba(14, 20, 36, 0.7);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 10px;
+    }
+
+    .principles-section h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: var(--yellow-neon);
+      margin-bottom: 15px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .principle-box {
+      background: rgba(5, 8, 18, 0.7);
+      border: 2px solid var(--cyan-neon);
+      border-radius: 10px;
+      box-shadow: 0 0 6px var(--cyan-glow), inset 0 0 6px var(--cyan-glow);
+      padding: 12px 16px;
+      font-size: 0.95rem;
+    }
+
+    .principle-box strong {
+      color: var(--cyan-neon);
+      font-family: 'Orbitron', sans-serif;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* QUIZ SYSTEM - ESTILO PLEX */
+    .quiz-view {
+      display: none;
+      background: var(--panel-bg);
+      border: 2px solid var(--pink-neon);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 0 12px var(--pink-glow), inset 0 0 12px var(--pink-glow);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .quiz-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--pink-neon);
+      font-size: 1.4rem;
+    }
+
+    .score-badge {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--yellow-neon);
+      font-size: 1.1rem;
+    }
+
+    .question-card {
+      background: rgba(7, 10, 20, 0.75);
+      border: 2px solid #2a3a5c;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: inset 0 0 8px rgba(42, 58, 92, 0.3);
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: rgba(20, 28, 50, 0.7);
+      border: 2px solid var(--panel-border);
+      color: var(--text-main);
+      padding: 12px 18px;
+      text-align: left;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--cyan-neon);
+      background: rgba(0, 240, 255, 0.05);
+      box-shadow: 0 0 8px var(--cyan-glow), inset 0 0 8px var(--cyan-glow);
+      transform: translateX(4px);
+    }
+
+    .option-btn.correct {
+      background: rgba(0, 255, 102, 0.1) !important;
+      border-color: var(--green-neon) !important;
+      color: var(--green-neon) !important;
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.3), inset 0 0 10px rgba(0, 255, 102, 0.2) !important;
+    }
+
+    .option-btn.incorrect {
+      background: rgba(255, 0, 85, 0.1) !important;
+      border-color: var(--pink-neon) !important;
+      color: var(--pink-neon) !important;
+      box-shadow: 0 0 10px rgba(255, 0, 85, 0.3), inset 0 0 10px rgba(255, 0, 85, 0.2) !important;
+    }
+
+    .feedback-box {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .feedback-box.correct-fb {
+      display: block;
+      background: rgba(0, 255, 102, 0.1);
+      border-left: 3px solid var(--green-neon);
+      color: #9effb8;
+    }
+
+    .feedback-box.incorrect-fb {
+      display: block;
+      background: rgba(255, 0, 85, 0.1);
+      border-left: 3px solid var(--pink-neon);
+      color: #ff9ebb;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 2px solid var(--yellow-neon);
+      color: var(--yellow-neon);
+      padding: 10px 24px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 0 6px rgba(255, 230, 0, 0.2), inset 0 0 6px rgba(255, 230, 0, 0.2);
+    }
+
+    .btn-reset:hover {
+      background: rgba(255, 230, 0, 0.1);
+      box-shadow: 0 0 12px rgba(255, 230, 0, 0.4), inset 0 0 12px rgba(255, 230, 0, 0.4);
+      text-shadow: 0 0 5px var(--yellow-neon);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .view-switcher {
+        flex-direction: column;
+      }
+      .nav-bar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+      .btn-return {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- ENCABEZADO INSTITUCIONAL OBLIGATORIO -->
+    <header>
+      <div class="main-title">RESOLUCIÓN 04240 DEL 1 DIC 2025</div>
+      <div class="subtitle-res">"Por la cual se desarrolla el modelo para el Uso Diferenciado y Proporcional de la Fuerza en la Policía Nacional"</div>
+      <div class="art-title">ARTÍCULO 7. MODELO PARA EL USO DIFERENCIADO Y PROPORCIONAL DE LA FUERZA</div>
+    </header>
+
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <div class="view-switcher">
+      <button class="btn-tab active" id="tabExplorer" onclick="showExplorer()">Matriz Interactiva</button>
+      <button class="btn-tab quiz-tab" id="tabQuiz" onclick="showQuiz()">Evaluación (15 Preguntas)</button>
+    </div>
+
+    <!-- SECCIÓN EXPLORADOR DE CONTENIDO -->
+    <div id="explorerSection">
+      <!-- BARRA DE CONTROL Y REGRESO -->
+      <div class="nav-bar">
+        <button class="btn-return hidden" id="btnReturn" onclick="navigateBack()">
+          &#x21A9; REGRESAR AL INICIO
+        </button>
+        <div class="status-badge" id="breadCrumb">MODO: TÍTULOS PRINCIPALES</div>
+      </div>
+
+      <!-- CONTENEDOR DINÁMICO DE CASILLAS -->
+      <div id="cardsGrid" class="cards-grid" style="margin-top: 18px;">
+        <!-- Se genera con JavaScript -->
+      </div>
+
+      <!-- VISTA DETALLADA DEL CONTENIDO -->
+      <div id="detailView" class="detail-view hidden" style="margin-top: 18px;">
+        <div class="category-tag" id="detailCategory">CATEGORÍA</div>
+        <h2 id="detailTitle">TÍTULO DEL CONTENIDO</h2>
+        <div class="body-content" id="detailText">Texto explicativo...</div>
+      </div>
+
+      <!-- PRINCIPIOS RECTORES -->
+      <div class="principles-section" id="principlesSection">
+        <h4>PRINCIPIOS FUNDAMENTALES DEL USO DE LA FUERZA</h4>
+        <div class="principles-grid">
+          <div class="principle-box">
+            <strong>1. LEGALIDAD</strong>
+            Toda actuación y medio empleado debe ceñirse a la Constitución, leyes, reglamentos y DD.HH. Restringe los medios a los dotados institucionalmente.
+          </div>
+          <div class="principle-box">
+            <strong>2. NECESIDAD</strong>
+            Obliga a usar mecanismos preventivos/disuasorios antes de la fuerza física. Criterios: Cualitativo (¿es indispensable?), Cuantitativo (la menor cantidad indispensable) y Temporal (cesar de inmediato).
+          </div>
+          <div class="principle-box">
+            <strong>3. PROPORCIONALIDAD</strong>
+            Correspondencia directa entre la fuerza/método y la conducta de la persona. Prohíbe expresamente medidas extremas para proteger bienes jurídicos de menor valor que la vida.
+          </div>
+          <div class="principle-box">
+            <strong>4. DIFERENCIACIÓN</strong>
+            Focaliza la respuesta únicamente sobre causantes de la agresión/infracción. Intervención dinámica y gradual con capacidad continua de escalamiento y desescalamiento.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN CUESTIONARIO EVALUATIVO -->
+    <div id="quizSection" class="quiz-view">
+      <div class="quiz-header">
+        <h2>EVALUACIÓN DE DOCTRINA OPERACIONAL</h2>
+        <div class="score-badge" id="scoreDisplay">Puntaje: 0 / 15</div>
+      </div>
+
+      <div id="quizContainer">
+        <!-- Preguntas inyectadas por JS -->
+      </div>
+
+      <div class="quiz-footer">
+        <button class="btn-reset" onclick="resetQuiz()">&#x21bb; Reiniciar Evaluación</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================
+       DATOS EXTRAÍDOS DEL WORD (RESOLUCIÓN 04240 DEL 1 DIC 2025)
+       ========================================================== */
+    const MODELO_DATA = {
+      "VARIABLES DE LA CONDUCTA": {
+        color: "#00f0ff", // Cian
+        items: [
+          {
+            title: "Resistencia pasiva",
+            text: "Es la persona o grupo de personas que no colaboran al no acatar las órdenes o sugerencias de policía, pero no reaccionan con violencia y no agreden físicamente."
+          },
+          {
+            title: "Resistencia activa",
+            text: "Es la persona o grupo de personas que se oponen de manera física a las órdenes o sugerencias emitidas por el uniformado, pudiendo llegar a un desafío de la autoridad que puede escalar, pero no se convierte en una agresión física."
+          },
+          {
+            title: "Agresión no letal o moderada",
+            text: "Se trata de la aplicación de fuerza moderada o violencia física, pudiendo utilizar objetos que propicien lesiones leves o atenten contra la integridad física, pero que no ponen en riesgo o peligro la vida."
+          },
+          {
+            title: "Agresión grave o letal",
+            text: "Se trata de la aplicación de un alto nivel de fuerza física o violenta sobre el cuerpo de una persona, pudiendo utilizar objetos con suficiente intensidad como para provocar lesiones corporales graves o permanente, es decir, que afecten el derecho a la salud y la integridad personal, o pongan en riesgo la vida."
+          }
+        ]
+      },
+      "SEGURIDAD": {
+        color: "#ffe600", // Amarillo
+        items: [
+          {
+            title: "Equipamiento",
+            text: "Son todos aquellos elementos dotados de manera oficial, recursos materiales, técnicos y tecnológicos reglamentados por la institución, según el servicio y actividad de policía que se desarrolle. Al hacer uso de la fuerza de manera proporcional y diferenciada, el personal uniformado debe demostrar autoridad apoyado en equipamiento y comunicación, estando formados, entrenados y equipados con medios técnicos, tecnológicos y de protección personal."
+          },
+          {
+            title: "Comunicación",
+            text: "Es un proceso permanente que le permite al uniformado fortalecer la atención al ciudadano, generando una comunicación asertiva y de confianza. Así mismo, le permitirá desescalar las variables de la conducta a través de las herramientas comunicativas descritas en el Manual de Atención al Ciudadano."
+          }
+        ]
+      },
+      "PERCEPCIÓN DEL RIESGO": {
+        color: "#ff0055", // Rosa
+        items: [
+          {
+            title: "Leve",
+            text: "Corresponde a situaciones en las que la conducta del ciudadano o el contexto del procedimiento no representan amenaza significativa para la integridad del uniformado, de terceros o del mismo intervenido."
+          },
+          {
+            title: "Leve a Moderada",
+            text: "Hace referencia a la variación de la conducta del ciudadano. Esta se presenta cuando existen comportamientos que generan riesgo para el uniformado, sin que constituyan un peligro inminente."
+          },
+          {
+            title: "Lesiones Moderadas a Graves",
+            text: "Situación en la que se evidencia un aumento considerable de amenaza para la integridad física del uniformado, del intervenido o de terceros, mediante la utilización de elementos contundentes, cortopunzantes u otros objetos."
+          },
+          {
+            title: "Lesiones Graves a Letales",
+            text: "Circunstancias en las que existe amenaza directa, actual e inminente contra la vida o integridad del uniformado, de terceros o del intervenido, esta se puede presentar mediante ataque con arma de fuego, arma blanca, artefactos explosivos, agresión múltiple, entre otras."
+          }
+        ]
+      },
+      "RESPUESTA RAZONABLE": {
+        color: "#00ff66", // Verde
+        items: [
+          {
+            title: "Técnicas y tácticas comunicativas",
+            text: "Son todas aquellas herramientas que le permiten al personal uniformado de la Policía Nacional, transmitir y recibir información para generar un canal de comunicación asertivo con las personas a intervenir buscando con ello alcanzar el objetivo legal, o el desescalamiento de las variables de la conducta, por medio de comunicación verbal y no verbal persuadiendo, orientando o regulando el comportamiento ciudadano."
+          },
+          {
+            title: "Técnicas y Tácticas de Control de Contacto y Control Físico",
+            text: "Son maniobras que permiten al personal uniformado controlar, reducir, inmovilizar, conducir o trasladar al presunto infractor."
+          },
+          {
+            title: "Técnicas y Tácticas defensivas",
+            text: "Aplicación de técnicas y tácticas defensivas y disuasivas, mediante el empleo de armas menos letales, generando condiciones de seguridad al intervenido, del uniformado y de terceros."
+          },
+          {
+            title: "Fuerza Potencialmente Letal",
+            text: "El uso de armas de fuego o fuerza potencialmente letal se considera como una medida extrema y solamente se podrá usar cuando otros medios de policía resulten ineficaces: I) en eventos de amenaza inminente de muerte o de lesiones graves del uniformado o terceras personas; II) para evitar un delito particularmente grave que entrañe un serio peligro para la vida; III) para detener o impedir la fuga de la persona que represente una amenaza seria para la vida. En todos los casos, solo cuando las demás medidas resulten insuficientes. En cualquier caso, sólo se podrá hacer uso intencional de armas letales cuando sea estrictamente inevitable para proteger una vida. El personal policial podrá desenfundar su arma de fuego de dotación oficial ante una amenaza real, actual, inminente o percibida, a fin de permitirse una reacción ante una situación de agresión letal y para la seguridad operacional."
+          }
+        ]
+      },
+      "SISTEMA DE INTERVENCIÓN POLICIAL": {
+        color: "#b026ff", // Púrpura
+        items: [
+          {
+            title: "Técnicas y Tácticas de Comunicación",
+            text: "Es el entrenamiento y reentrenamiento que recibe el personal uniformado de la Policía Nacional, para el fortalecimiento de habilidades de comunicación oral y no verbal, orientado a generar el control preventivo y disuasivo. Comprende la verbalización, contacto visual, quinesia, proxemia y paralingüística, con el objetivo de persuadir, disuadir o aplicar la mediación policial, sin necesidad del contacto físico."
+          },
+          {
+            title: "Técnicas de Control, Reducción e Inmovilización",
+            text: "Es el entrenamiento y reentrenamiento que recibe el personal uniformado para el fortalecimiento de habilidades que permitan una actuación profesional y racional para la utilización de técnicas de contacto frente a una resistencia activa o moderada. Permitiendo reducir riesgos y amenazas en protección del uniformado y de terceros."
+          },
+          {
+            title: "Técnicas y Tácticas defensivas AML (Armas Menos Letales)",
+            text: "Es el entrenamiento y reentrenamiento que recibe el personal uniformado de la Policía Nacional para el fortalecimiento de habilidades que permiten mitigar agresiones físicas, a través del uso de armas menos letales."
+          },
+          {
+            title: "Técnicas y Tácticas con armas de fuego",
+            text: "Es el entrenamiento que recibe el personal uniformado para el fortalecimiento de habilidades que le permiten el uso de la fuerza potencialmente letal de manera excepcional, bajo condiciones de amenaza inminente y grave contra la vida. El uniformado deberá actuar conforme al marco legal y protocolos institucionales, garantizando el respeto por los derechos humanos."
+          }
+        ]
+      }
+    };
+
+    /* ==========================================================
+       PACK DE 15 PREGUNTAS
+       ========================================================== */
+    const QUESTIONS_DATA = [
+      {
+        q: "1. Si una persona no acata las órdenes de policía pero no reacciona con violencia física ni agrede a los uniformados, ¿en qué variable de conducta se clasifica?",
+        options: ["Resistencia pasiva", "Resistencia activa", "Agresión no letal", "Riesgo moderado"],
+        correct: 0,
+        fb: "Correcto: La Resistencia Pasiva comprende a quienes no colaboran al no acatar órdenes pero no ejercen violencia física."
+      },
+      {
+        q: "2. ¿Cuál es el criterio temporal que rige el principio de Necesidad en el uso de la fuerza?",
+        options: [
+          "Mantener la fuerza 10 minutos posteriores para asegurar el control",
+          "Ordenar el cese del uso de la fuerza de forma inmediata al cumplirse el objetivo o al ser evidente que no es factible alcanzarlo",
+          "Aplicar la fuerza únicamente en horas nocturnas o de visibilidad reducida",
+          "Determinar que la intervención no puede extenderse por más de un turno de servicio"
+        ],
+        correct: 1,
+        fb: "Correcto: El criterio temporal exige cesar el uso de la fuerza tan pronto se alcance el fin legal o resulte inviable."
+      },
+      {
+        q: "3. ¿Qué componentes integran la casilla de SEGURIDAD según el Modelo?",
+        options: [
+          "Defensa personal y Reducción",
+          "Equipamiento y Comunicación",
+          "Armas de fuego y Vehículos policiales",
+          "Esposas y Bastón policial"
+        ],
+        correct: 1,
+        fb: "Correcto: El personal uniformado demuestra autoridad apoyado en Equipamiento y Comunicación."
+      },
+      {
+        q: "4. La agresión donde se utilizan objetos contundentes o cortopunzantes aumentando la amenaza considerablemente se asocia al riesgo de:",
+        options: ["Riesgo Leve", "Leve a Moderada", "Lesiones Moderadas a Graves", "Resistencia Activa"],
+        correct: 2,
+        fb: "Correcto: Lesiones Moderadas a Graves involucra incremento sustancial del peligro mediante objetos contundentes o cortopunzantes."
+      },
+      {
+        q: "5. ¿En qué escenario está estrictamente justificado el uso intencional de armas letales / fuerza potencialmente letal?",
+        options: [
+          "Para evitar que el intervenido dañe un bien material de alto valor del Estado",
+          "Cuando el ciudadano se niega a suministrar su identificación personal",
+          "Cuando sea estrictamente inevitable para proteger una vida ante amenaza inminente de muerte o lesiones graves",
+          "Ante cualquier desafío verbal de la autoridad"
+        ],
+        correct: 2,
+        fb: "Correcto: La fuerza potencialmente letal es excepcional y solo procede cuando es inevitable para preservar vidas."
+      },
+      {
+        q: "6. En el Sistema de Intervención Policial, ¿qué elementos componen las Técnicas y Tácticas de Comunicación?",
+        options: [
+          "Esposamiento rápido y palanca articular",
+          "Verbalización, contacto visual, quinesia, proxemia y paralingüística",
+          "Disparo disuasivo y control físico",
+          "Uso del gas pimienta y bastón tonfa"
+        ],
+        correct: 1,
+        fb: "Correcto: Se fundamenta en verbalización, contacto visual, quinesia, proxemia y paralingüística para disuadir o mediar sin contacto."
+      },
+      {
+        q: "7. ¿Qué prohibición expresa estipula el principio de Proporcionalidad?",
+        options: [
+          "Prohíbe usar técnicas de comunicación verbal ante agresiones graves",
+          "Queda expresamente prohibido implementar medidas extremas para proteger bienes jurídicos o materiales inferiores a la vida o integridad",
+          "Prohíbe el uso de armamento dotado reglamentariamente",
+          "Prohíbe actuar de noche"
+        ],
+        correct: 1,
+        fb: "Correcto: Ningún bien material o secundario justifica medidas extremas si su valor es inferior a la vida humana."
+      },
+      {
+        q: "8. ¿Cuándo está facultado el uniformado para desenfundar su arma de fuego de dotación oficial?",
+        options: [
+          "Únicamente tras haber recibido un impacto de proyectil",
+          "Ante una amenaza real, actual, inminente o percibida, a fin de permitirse una reacción de agresión letal y por seguridad operacional",
+          "Cada vez que ordene un registro a persona rutinario",
+          "Solamente con autorización radial previa del comandante de estación"
+        ],
+        correct: 1,
+        fb: "Correcto: La norma autoriza desenfundar ante amenaza real, inminente o percibida para garantizar la reacción y seguridad operacional."
+      },
+      {
+        q: "9. ¿Qué define el principio de Diferenciación?",
+        options: [
+          "Separar a hombres y mujeres en la celda",
+          "Focalizar la respuesta únicamente sobre los causantes de la perturbación e intervenir dinámicamente tanto para escalar como para desescalar",
+          "Utilizar armamento de diferente calibre de acuerdo a la hora",
+          "Permitir la intervención de personal civil en apoyo"
+        ],
+        correct: 1,
+        fb: "Correcto: Diferenciación exige focalizar la fuerza sobre el infractor y adaptarse gradualmente en escalamiento y desescalamiento."
+      },
+      {
+        q: "10. ¿A qué se refieren las siglas AML en el Modelo de Uso de la Fuerza?",
+        options: ["Acciones Militares Locales", "Armas Menos Letales", "Alerta Máxima de Lesiones", "Artículos Médicos Legales"],
+        correct: 1,
+        fb: "Correcto: AML corresponde a Armas Menos Letales dentro de las técnicas y tácticas defensivas."
+      },
+      {
+        q: "11. La persona que se opone de manera física a la orden del uniformado generando desafío pero sin agresión física se encuentra en:",
+        options: ["Resistencia Pasiva", "Resistencia Activa", "Agresión Grave", "Violencia Desatada"],
+        correct: 1,
+        fb: "Correcto: La Resistencia Activa implica oposición física y desafío directo sin consumar golpes o agresión física lesiva."
+      },
+      {
+        q: "12. La aplicación de maniobras para controlar, reducir, inmovilizar, conducir o trasladar al presunto infractor corresponde a:",
+        options: [
+          "Técnicas Tácticas de Control de Contacto y Control Físico",
+          "Técnicas con armas de fuego",
+          "Fuerza Potencialmente Letal",
+          "Mediación comunitaria pasiva"
+        ],
+        correct: 0,
+        fb: "Correcto: Son maniobras orientadas al control de contacto, reducción, inmovilización y traslado de presuntos infractores."
+      },
+      {
+        q: "13. El criterio cuantitativo del principio de Necesidad exige:",
+        options: [
+          "Utilizar la fuerza con al menos tres uniformados presentes",
+          "Utilizar la mínima cantidad de fuerza estrictamente indispensable para ser efectiva",
+          "Contar todos los cartuchos antes y después del servicio",
+          "Medir la distancia exacta en metros al intervenido"
+        ],
+        correct: 1,
+        fb: "Correcto: Exige dosificar la cantidad mínima de fuerza requerida para lograr el objetivo legal."
+      },
+      {
+        q: "14. La situación que representa amenaza directa, actual e inminente contra la vida mediante arma de fuego o artefacto explosivo se clasifica en percepción del riesgo como:",
+        options: ["Leve", "Leve a Moderada", "Lesiones Moderadas a Graves", "Lesiones Graves a Letales"],
+        correct: 3,
+        fb: "Correcto: Lesiones Graves a Letales contempla atentados directos e inminentes con capacidad letal como armas de fuego y explosivos."
+      },
+      {
+        q: "15. ¿Qué principio restringe los medios operativos policiales únicamente a los provistos de forma oficial y reglamentada?",
+        options: ["Criterio Temporal", "Constitucionalidad y Legalidad", "Economía procesal", "Solidaridad ciudadana"],
+        correct: 1,
+        fb: "Correcto: El principio de Constitucionalidad y Legalidad prohíbe armas o medios no autorizados ni provistos oficialmente."
+      }
+    ];
+
+    /* ==========================================================
+       CONTROLADOR DE ESTADO DE NAVEGACIÓN
+       ========================================================== */
+    let currentLevel = 1;
+    let selectedMainCategory = null;
+
+    const cardsGrid = document.getElementById("cardsGrid");
+    const detailView = document.getElementById("detailView");
+    const btnReturn = document.getElementById("btnReturn");
+    const breadCrumb = document.getElementById("breadCrumb");
+    const principlesSection = document.getElementById("principlesSection");
+
+    function renderMainCategories() {
+      currentLevel = 1;
+      selectedMainCategory = null;
+      btnReturn.classList.add("hidden");
+      detailView.classList.add("hidden");
+      cardsGrid.classList.remove("hidden");
+      principlesSection.classList.remove("hidden");
+      breadCrumb.textContent = "MODO: TÍTULOS PRINCIPALES (SELECCIONE UNA CASILLA)";
+
+      cardsGrid.innerHTML = "";
+      Object.keys(MODELO_DATA).forEach(title => {
+        const cat = MODELO_DATA[title];
+        const card = document.createElement("div");
+        card.className = "neon-card";
+        // Asignamos la variable CSS para el color de la manguera LED
+        card.style.setProperty("--card-color", cat.color); 
+        
+        card.innerHTML = `
+          <div>
+            <span style="font-size:0.75rem; color:var(--card-color); font-family:'Orbitron'; font-weight:700;">MATRIZ DE FUERZA</span>
+            <h3 style="margin-top:6px;">${title}</h3>
+          </div>
+          <div class="card-hint">
+            Ver Subcasillas (${cat.items.length}) &#x27A4;
+          </div>
+        `;
+        card.onclick = () => renderSubcategories(title);
+        cardsGrid.appendChild(card);
+      });
+    }
+
+    function renderSubcategories(mainTitle) {
+      currentLevel = 2;
+      selectedMainCategory = mainTitle;
+      btnReturn.classList.remove("hidden");
+      detailView.classList.add("hidden");
+      cardsGrid.classList.remove("hidden");
+      principlesSection.classList.add("hidden");
+      breadCrumb.textContent = `CATEGORÍA: ${mainTitle} > SELECCIONE UN SUBTÍTULO`;
+
+      const cat = MODELO_DATA[mainTitle];
+      cardsGrid.innerHTML = "";
+
+      cat.items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "neon-card";
+        // Asignamos el color dinámico heredado de la categoría principal
+        card.style.setProperty("--card-color", cat.color);
+
+        card.innerHTML = `
+          <div>
+            <span style="font-size:0.75rem; color:var(--card-color); font-family:'Orbitron'; font-weight:700;">SUBTÍTULO #${index + 1}</span>
+            <h3 style="margin-top:6px;">${item.title}</h3>
+          </div>
+          <div class="card-hint">
+            Explorar Contenido &#x27A4;
+          </div>
+        `;
+        card.onclick = () => showContentDetail(mainTitle, item);
+        cardsGrid.appendChild(card);
+      });
+    }
+
+    function showContentDetail(categoryName, item) {
+      currentLevel = 3;
+      cardsGrid.classList.add("hidden");
+      detailView.classList.remove("hidden");
+      principlesSection.classList.add("hidden");
+      btnReturn.classList.remove("hidden");
+
+      breadCrumb.textContent = `CONTENIDO: ${categoryName} > ${item.title}`;
+      document.getElementById("detailCategory").textContent = categoryName;
+      document.getElementById("detailTitle").textContent = item.title;
+      document.getElementById("detailText").textContent = item.text;
+    }
+
+    function navigateBack() {
+      if (currentLevel === 3) {
+        renderSubcategories(selectedMainCategory);
+      } else if (currentLevel === 2) {
+        renderMainCategories();
+      }
+    }
+
+    /* ==========================================================
+       VISTAS SUPERIORES (EXPLORADOR VS QUIZ)
+       ========================================================== */
+    function showExplorer() {
+      document.getElementById("explorerSection").classList.remove("hidden");
+      document.getElementById("quizSection").style.display = "none";
+      document.getElementById("tabExplorer").classList.add("active");
+      document.getElementById("tabQuiz").classList.remove("active");
+    }
+
+    function showQuiz() {
+      document.getElementById("explorerSection").classList.add("hidden");
+      document.getElementById("quizSection").style.display = "block";
+      document.getElementById("tabExplorer").classList.remove("active");
+      document.getElementById("tabQuiz").classList.add("active");
+      renderQuiz();
+    }
+
+    /* ==========================================================
+       MOTOR DEL CUESTIONARIO
+       ========================================================== */
+    let answeredQuestions = new Set();
+    let currentScore = 0;
+
+    function renderQuiz() {
+      const quizContainer = document.getElementById("quizContainer");
+      quizContainer.innerHTML = "";
+      answeredQuestions.clear();
+      currentScore = 0;
+      updateScoreUI();
+
+      QUESTIONS_DATA.forEach((item, qIndex) => {
+        const qCard = document.createElement("div");
+        qCard.className = "question-card";
+
+        const qTitle = document.createElement("div");
+        qTitle.className = "question-text";
+        qTitle.textContent = item.q;
+        qCard.appendChild(qTitle);
+
+        const optContainer = document.createElement("div");
+        optContainer.className = "options-list";
+
+        const fbBox = document.createElement("div");
+        fbBox.className = "feedback-box";
+        fbBox.id = `fb_${qIndex}`;
+
+        item.options.forEach((optText, optIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = optText;
+          btn.onclick = () => handleAnswer(qIndex, optIndex, optContainer, fbBox);
+          optContainer.appendChild(btn);
+        });
+
+        qCard.appendChild(optContainer);
+        qCard.appendChild(fbBox);
+        quizContainer.appendChild(qCard);
+      });
+    }
+
+    function handleAnswer(qIndex, selectedOptIndex, optContainer, fbBox) {
+      if (answeredQuestions.has(qIndex)) return;
+      answeredQuestions.add(qIndex);
+
+      const qData = QUESTIONS_DATA[qIndex];
+      const buttons = optContainer.querySelectorAll(".option-btn");
+
+      buttons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === qData.correct) {
+          b.classList.add("correct");
+        }
+      });
+
+      if (selectedOptIndex === qData.correct) {
+        currentScore++;
+        fbBox.className = "feedback-box correct-fb";
+        fbBox.innerHTML = `&#10004; ${qData.fb}`;
+      } else {
+        buttons[selectedOptIndex].classList.add("incorrect");
+        fbBox.className = "feedback-box incorrect-fb";
+        fbBox.innerHTML = `&#10008; Respuesta incorrecta. Explicación: ${qData.fb}`;
+      }
+      updateScoreUI();
+    }
+
+    function updateScoreUI() {
+      document.getElementById("scoreDisplay").textContent = `Puntaje: ${currentScore} / ${QUESTIONS_DATA.length}`;
+    }
+
+    function resetQuiz() {
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Inicialización al cargar el documento
+    window.addEventListener("DOMContentLoaded", () => {
+      renderMainCategories();
+    });
+  </script>
+</body>
+</html>
