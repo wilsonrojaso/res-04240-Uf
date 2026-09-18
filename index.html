@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Módulo de estudio interactivo de la Resolución 04240: Modelo para el Uso Diferenciado y Proporcional de la Fuerza. Evaluación de 15 preguntas y certificado. CENOP.">
+<meta name="theme-color" content="#080915">
 <title>Resolución 04240 · Uso Diferenciado y Proporcional de la Fuerza</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -12,17 +15,20 @@
     --cyan:#5ff2f2; --magenta:#f26ce0; --purple:#a78bfa;
     --green:#7CFFCB; --blue:#7dc4ff; --yellow:#ffe08a;
     --orange:#ffb37a; --red:#ff8fa3; --text:#dce6ff; --muted:#8fa1c7;
+    --font-display:'Orbitron','Segoe UI',system-ui,sans-serif;
+    --font-body:'Rajdhani','Segoe UI',system-ui,-apple-system,sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    font-family:'Rajdhani',sans-serif; color:var(--text);
+    font-family:var(--font-body); color:var(--text);
     background:
       radial-gradient(circle at 20% 20%, rgba(95,242,242,0.06), transparent 40%),
       radial-gradient(circle at 80% 70%, rgba(242,108,224,0.06), transparent 45%),
       linear-gradient(160deg, var(--bg1), var(--bg2) 50%, var(--bg3));
     background-attachment:fixed; overflow-x:hidden; min-height:100vh; line-height:1.5;
   }
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
   .bg-grid{
     position:fixed;inset:0;
     background-image:linear-gradient(rgba(95,242,242,0.05) 1px, transparent 1px),
@@ -35,59 +41,99 @@
   .particles{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
   .particle{position:absolute;bottom:-10px;border-radius:50%;filter:blur(1px);opacity:0;animation:floatUp linear infinite;}
   @keyframes floatUp{0%{transform:translateY(0) translateX(0);opacity:0;}10%{opacity:.6;}90%{opacity:.4;}100%{transform:translateY(-115vh) translateX(30px);opacity:0;}}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .bg-grid{animation:none;}
+    .particle{display:none;}
+    .hero-badge,.card,.tab-btn.quiz-btn.unlocked,.progress-fill,.escalation-bar .scanner{animation:none !important;}
+    .tab-content{animation:none;}
+  }
 
-  /* ---------- TOP BAR (reset) ---------- */
+  /* ---------- TOP BAR ---------- */
   .top-bar{
-    position:relative;z-index:2;display:flex;justify-content:flex-end;
-    padding:16px 24px 0;max-width:1180px;margin:0 auto;
+    position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:16px 24px 0;max-width:1180px;margin:0 auto;flex-wrap:wrap;
   }
-  .btn-reset{
-    font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:1px;
-    color:var(--red);background:rgba(255,143,163,0.05);
-    border:1px solid rgba(255,143,163,0.3);padding:8px 16px;border-radius:20px;
-    cursor:pointer;transition:.4s;display:flex;align-items:center;gap:6px;
+  .search-wrap{position:relative;flex:1 1 320px;max-width:520px;}
+  .search-input{
+    width:100%;padding:11px 40px 11px 38px;border-radius:24px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(95,242,242,0.25);
+    color:var(--text);font-family:var(--font-body);font-size:.92rem;
   }
+  .search-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 16px rgba(95,242,242,0.25);}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.6;font-size:.9rem;pointer-events:none;}
+  .search-clear{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);display:none;
+    background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px;
+  }
+  .search-clear.show{display:block;}
+  .search-results{
+    position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:40;display:none;
+    background:rgba(12,16,36,0.98);border:1px solid rgba(95,242,242,0.3);border-radius:14px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.5);max-height:60vh;overflow-y:auto;padding:8px;
+  }
+  .search-results.show{display:block;}
+  .search-item{
+    display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    padding:10px 12px;border-radius:10px;color:var(--text);font-family:var(--font-body);
+  }
+  .search-item:hover,.search-item:focus{background:rgba(95,242,242,0.08);}
+  .search-item .si-tab{font-family:var(--font-display);font-size:.62rem;letter-spacing:1.5px;color:var(--cyan);display:block;margin-bottom:3px;}
+  .search-item .si-title{font-weight:700;font-size:.92rem;display:block;}
+  .search-item .si-snip{font-size:.82rem;color:var(--muted);display:block;margin-top:2px;}
+  .search-empty{padding:14px;text-align:center;color:var(--muted);font-size:.9rem;}
+  .top-actions{display:flex;gap:10px;align-items:center;}
+  .btn-reset,.btn-help{
+    font-family:var(--font-display);font-size:.68rem;letter-spacing:1px;
+    padding:8px 16px;border-radius:20px;cursor:pointer;transition:.4s;display:flex;align-items:center;gap:6px;
+  }
+  .btn-reset{color:var(--red);background:rgba(255,143,163,0.05);border:1px solid rgba(255,143,163,0.3);}
   .btn-reset:hover{background:rgba(255,143,163,0.12);box-shadow:0 0 14px rgba(255,143,163,0.25);}
+  .btn-help{color:var(--cyan);background:rgba(95,242,242,0.05);border:1px solid rgba(95,242,242,0.3);}
+  .btn-help:hover{background:rgba(95,242,242,0.12);box-shadow:0 0 14px rgba(95,242,242,0.25);}
 
-  header.hero{position:relative;z-index:1;text-align:center;padding:40px 20px 50px;}
+  header.hero{position:relative;z-index:1;text-align:center;padding:30px 20px 50px;}
   .hero-badge{
-    display:inline-block;font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:4px;
+    display:inline-block;font-family:var(--font-display);font-size:.7rem;letter-spacing:4px;
     color:var(--cyan);border:1px solid rgba(95,242,242,0.4);padding:6px 18px;border-radius:30px;
     background:rgba(95,242,242,0.05);box-shadow:0 0 20px rgba(95,242,242,0.15);
     animation:softGlowCyan 5s ease-in-out infinite;margin-bottom:24px;
   }
   header.hero h1{
-    font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(2.2rem,6vw,4.2rem);
+    font-family:var(--font-display);font-weight:900;font-size:clamp(2.2rem,6vw,4.2rem);
     letter-spacing:3px;color:#eaf2ff;
     text-shadow:0 0 20px rgba(95,242,242,0.35), 0 0 60px rgba(167,139,250,0.2);
   }
   header.hero h1 span{background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .date{font-family:'Orbitron',sans-serif;letter-spacing:6px;font-size:.85rem;color:var(--purple);margin-top:14px;opacity:.85;}
+  .date{font-family:var(--font-display);letter-spacing:6px;font-size:.85rem;color:var(--purple);margin-top:14px;opacity:.85;}
   .subtitle{max-width:720px;margin:26px auto 0;font-size:1.05rem;color:var(--muted);font-style:italic;}
   .article-tag{
-    margin-top:34px;display:inline-block;font-family:'Orbitron',sans-serif;font-size:.75rem;
+    margin-top:34px;display:inline-block;font-family:var(--font-display);font-size:.75rem;
     letter-spacing:1.5px;color:#0c1024;background:linear-gradient(90deg,var(--cyan),var(--blue));
     padding:12px 26px;border-radius:10px;box-shadow:0 0 30px rgba(95,242,242,0.25);
   }
   @keyframes softGlowCyan{0%,100%{box-shadow:0 0 12px rgba(95,242,242,0.12);}50%{box-shadow:0 0 26px rgba(95,242,242,0.28);}}
 
   .progress-wrap{max-width:500px;margin:34px auto 0;text-align:center;}
-  .progress-label{font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+  .progress-label{font-family:var(--font-display);font-size:.7rem;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
   .progress-track{height:8px;border-radius:10px;background:rgba(255,255,255,0.06);overflow:hidden;border:1px solid rgba(255,255,255,0.08);}
   .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan),var(--purple));transition:width 1s ease;box-shadow:0 0 12px rgba(95,242,242,0.4);}
+  .storage-note{margin-top:12px;font-size:.78rem;color:var(--yellow);display:none;}
+  .storage-note.show{display:block;}
 
   nav.tabs-nav{
     position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-    padding:16px 20px;background:rgba(8,9,21,0.7);backdrop-filter:blur(14px);border-bottom:1px solid rgba(95,242,242,0.15);
+    padding:16px 20px;background:rgba(8,9,21,0.75);backdrop-filter:blur(14px);border-bottom:1px solid rgba(95,242,242,0.15);
   }
   .tab-btn{
-    font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:.5px;font-size:.85rem;color:var(--muted);
+    font-family:var(--font-body);font-weight:600;letter-spacing:.5px;font-size:.85rem;color:var(--muted);
     background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);padding:10px 18px;
     border-radius:24px;cursor:pointer;transition:all .5s ease;display:flex;align-items:center;gap:6px;
   }
   .tab-btn:hover{color:var(--cyan);border-color:rgba(95,242,242,0.4);box-shadow:0 0 14px rgba(95,242,242,0.15);}
   .tab-btn.active{color:#0c1024;background:linear-gradient(90deg,var(--cyan),var(--purple));border-color:transparent;box-shadow:0 0 22px rgba(167,139,250,0.35);}
   .tab-btn.visited::after{content:'✓';font-size:.7rem;color:var(--green);}
+  .tab-btn.active.visited::after{color:#0c1024;}
   .tab-btn.quiz-btn.locked{opacity:.5;cursor:not-allowed;}
   .tab-btn.quiz-btn.unlocked{
     color:#1a1200;background:linear-gradient(90deg,var(--yellow),var(--orange));
@@ -96,11 +142,11 @@
   @keyframes pulseUnlock{0%,100%{box-shadow:0 0 14px rgba(255,224,138,0.25);}50%{box-shadow:0 0 30px rgba(255,224,138,0.5);}}
 
   main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:50px 24px 100px;}
-  .tab-content{display:none;animation:fadeIn 1s ease;}
+  .tab-content{display:none;animation:fadeIn 1s ease;scroll-margin-top:96px;}
   .tab-content.active{display:block;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
 
-  .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,3.5vw,2.3rem);text-align:center;color:#eaf2ff;margin-bottom:12px;}
+  .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,3.5vw,2.3rem);text-align:center;color:#eaf2ff;margin-bottom:12px;}
   .section-title span{color:var(--cyan);text-shadow:0 0 18px rgba(95,242,242,0.4);}
   .section-desc{max-width:780px;margin:0 auto 40px;text-align:center;color:var(--muted);font-size:1rem;}
 
@@ -119,16 +165,18 @@
   .card{
     position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
     border-radius:18px;padding:26px 24px;backdrop-filter:blur(10px);
-    transition:transform .6s ease, box-shadow .6s ease, border-color .6s ease;opacity:0;transform:translateY(24px);
+    transition:transform .6s ease, box-shadow .6s ease, border-color .6s ease, opacity .6s ease;
+    opacity:0;transform:translateY(24px);scroll-margin-top:110px;
   }
   .card.in-view{opacity:1;transform:translateY(0);}
   .card:hover{transform:translateY(-8px);}
   .card.wide{grid-column:1 / -1;}
-  .card .level-num{font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:2px;opacity:.7;margin-bottom:8px;display:block;}
-  .card h3{font-family:'Orbitron',sans-serif;font-size:1.05rem;margin-bottom:12px;line-height:1.4;}
+  .card .level-num{font-family:var(--font-display);font-size:.75rem;letter-spacing:2px;opacity:.7;margin-bottom:8px;display:block;}
+  .card h3{font-family:var(--font-display);font-size:1.05rem;margin-bottom:12px;line-height:1.4;}
   .card p{color:var(--muted);font-size:.95rem;}
   .card ul{margin-top:10px;padding-left:18px;color:var(--muted);font-size:.9rem;}
   .card ul li{margin-bottom:6px;}
+  .search-hit{border-color:var(--cyan) !important;box-shadow:0 0 30px rgba(95,242,242,0.45) !important;transition:box-shadow .4s ease, border-color .4s ease;}
 
   .lvl-1{border-color:rgba(124,255,203,0.35);animation:glowGreen 5s ease-in-out infinite;}
   .lvl-1 h3, .lvl-1 .level-num{color:var(--green);}
@@ -150,7 +198,7 @@
   @keyframes glowCyan{0%,100%{box-shadow:0 0 12px rgba(95,242,242,0.08);}50%{box-shadow:0 0 26px rgba(95,242,242,0.22);}}
 
   .badge-critical{
-    display:inline-block;font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:2px;color:#1a0710;
+    display:inline-block;font-family:var(--font-display);font-size:.65rem;letter-spacing:2px;color:#1a0710;
     background:linear-gradient(90deg,var(--red),var(--magenta));padding:4px 12px;border-radius:20px;margin-bottom:14px;
   }
 
@@ -158,40 +206,67 @@
   .sub-item{background:rgba(255,255,255,0.03);border:1px solid rgba(95,242,242,0.2);border-radius:12px;padding:16px;transition:box-shadow .6s ease;}
   .sub-item:hover{box-shadow:0 0 18px rgba(95,242,242,0.2);}
   .sub-tag{
-    display:inline-block;font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:1.5px;color:#0c1024;
+    display:inline-block;font-family:var(--font-display);font-size:.68rem;letter-spacing:1.5px;color:#0c1024;
     background:linear-gradient(90deg,var(--cyan),var(--blue));padding:4px 12px;border-radius:20px;margin-bottom:10px;
   }
   .sub-item p{font-size:.88rem;color:var(--muted);}
 
+  /* ---------- NAVEGACIÓN ENTRE TEMAS ---------- */
+  .topic-nav{
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;
+    margin-top:38px;padding-top:22px;border-top:1px dashed rgba(95,242,242,0.2);
+  }
+  .topic-nav .nav-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn-ghost{
+    font-family:var(--font-display);font-size:.75rem;letter-spacing:1px;color:var(--cyan);
+    background:transparent;border:1px solid rgba(95,242,242,0.4);padding:10px 20px;border-radius:24px;cursor:pointer;transition:.4s;
+  }
+  .btn-ghost:hover{background:rgba(95,242,242,0.08);}
+  .btn-ghost:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-ghost.done{color:var(--green);border-color:rgba(124,255,203,0.5);background:rgba(124,255,203,0.06);}
+
   .quiz-locked{text-align:center;padding:80px 20px;border:1px dashed rgba(255,224,138,0.3);border-radius:20px;background:rgba(255,224,138,0.03);}
   .lock-icon{font-size:3.5rem;margin-bottom:20px;filter:drop-shadow(0 0 14px rgba(255,224,138,0.4));}
-  .quiz-locked h3{font-family:'Orbitron',sans-serif;color:var(--yellow);margin-bottom:14px;}
+  .quiz-locked h3{font-family:var(--font-display);color:var(--yellow);margin-bottom:14px;}
   .quiz-locked p{color:var(--muted);max-width:480px;margin:0 auto 24px;}
   .mini-progress{max-width:320px;margin:0 auto;height:8px;border-radius:10px;background:rgba(255,255,255,0.06);overflow:hidden;border:1px solid rgba(255,255,255,0.08);}
   .mini-progress-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));transition:width .6s ease;}
   .missing-tabs{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-  .missing-chip{font-size:.75rem;padding:5px 12px;border-radius:16px;border:1px solid rgba(255,143,163,0.4);color:var(--red);background:rgba(255,143,163,0.05);}
+  .missing-chip{font-size:.75rem;padding:5px 12px;border-radius:16px;border:1px solid rgba(255,143,163,0.4);color:var(--red);background:rgba(255,143,163,0.05);cursor:pointer;transition:.3s;}
+  .missing-chip:hover{background:rgba(255,143,163,0.14);}
 
   .prev-pass-banner{
     max-width:820px;margin:0 auto 30px;padding:20px 24px;border-radius:16px;
     background:rgba(124,255,203,0.05);border:1px solid rgba(124,255,203,0.3);
     text-align:center;box-shadow:0 0 22px rgba(124,255,203,0.1);
   }
-  .prev-pass-banner h4{font-family:'Orbitron',sans-serif;color:var(--green);margin-bottom:8px;font-size:.95rem;}
+  .prev-pass-banner h4{font-family:var(--font-display);color:var(--green);margin-bottom:8px;font-size:.95rem;}
   .prev-pass-banner p{color:var(--muted);font-size:.9rem;margin-bottom:14px;}
   .banner-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-  .btn-ghost{
-    font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:1px;color:var(--cyan);
-    background:transparent;border:1px solid rgba(95,242,242,0.4);padding:10px 20px;border-radius:24px;cursor:pointer;transition:.4s;
+  .banner-actions .name-input{margin-bottom:12px;}
+
+  .quiz-toolbar{
+    display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;
+    padding:14px 18px;margin-bottom:22px;
   }
-  .btn-ghost:hover{background:rgba(95,242,242,0.08);}
+  .quiz-toolbar .qt-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .quiz-toolbar .qt-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .chk-inline{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);cursor:pointer;}
+  .chk-inline input{accent-color:var(--cyan);width:16px;height:16px;}
+  .qt-stat{font-family:var(--font-display);font-size:.7rem;letter-spacing:1px;color:var(--muted);}
+  .qt-stat b{color:var(--cyan);}
+  .live-progress{height:6px;border-radius:8px;background:rgba(255,255,255,0.07);overflow:hidden;flex:1 1 160px;min-width:120px;}
+  .live-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .3s ease;}
 
   .quiz-question{
     background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;
     padding:24px;margin-bottom:20px;opacity:0;transform:translateY(20px);animation:fadeInQ .7s ease forwards;
   }
   @keyframes fadeInQ{to{opacity:1;transform:translateY(0);}}
-  .quiz-question h4{font-family:'Orbitron',sans-serif;font-size:.95rem;color:var(--cyan);margin-bottom:16px;line-height:1.5;}
+  .quiz-question h4{font-family:var(--font-display);font-size:.95rem;color:var(--cyan);margin-bottom:16px;line-height:1.5;}
+  .quiz-question .q-meta{display:flex;justify-content:space-between;gap:10px;font-size:.72rem;font-family:var(--font-display);letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+  .quiz-question.pending{border-color:rgba(255,224,138,0.6);box-shadow:0 0 18px rgba(255,224,138,0.18);}
   .quiz-options{display:flex;flex-direction:column;gap:10px;}
   .quiz-option{
     display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.02);
@@ -201,36 +276,58 @@
   .quiz-option input{accent-color:var(--cyan);}
   .quiz-option.correct{border-color:var(--green);background:rgba(124,255,203,0.08);box-shadow:0 0 14px rgba(124,255,203,0.2);}
   .quiz-option.incorrect{border-color:var(--red);background:rgba(255,143,163,0.08);box-shadow:0 0 14px rgba(255,143,163,0.2);}
+  .quiz-option.dim{opacity:.55;}
+  .q-explain{
+    margin-top:14px;padding:14px 16px;border-left:3px solid var(--purple);background:rgba(167,139,250,0.06);
+    border-radius:0 10px 10px 0;font-size:.88rem;color:var(--muted);display:none;
+  }
+  .q-explain.show{display:block;}
+  .q-explain b{color:var(--purple);font-family:var(--font-display);font-size:.72rem;letter-spacing:1px;display:block;margin-bottom:6px;}
 
-  .quiz-submit-wrap{text-align:center;margin-top:30px;}
+  .quiz-submit-wrap{text-align:center;margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
   .btn-neon{
-    font-family:'Orbitron',sans-serif;font-size:.85rem;letter-spacing:1.5px;color:#0c1024;
+    font-family:var(--font-display);font-size:.85rem;letter-spacing:1.5px;color:#0c1024;
     background:linear-gradient(90deg,var(--cyan),var(--purple));border:none;padding:14px 34px;border-radius:30px;
     cursor:pointer;box-shadow:0 0 25px rgba(167,139,250,0.35);transition:transform .4s ease;
   }
   .btn-neon:hover{transform:translateY(-3px);}
+  .btn-neon:disabled{opacity:.45;cursor:not-allowed;transform:none;}
   .btn-certificate{background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 25px rgba(124,255,203,0.35);}
-  .btn-share{
-    background:linear-gradient(90deg,#25D366,#128C7E);box-shadow:0 0 25px rgba(37,211,102,0.35);
-    color:#04140d;
-  }
+  .btn-share{background:linear-gradient(90deg,#25D366,#128C7E);box-shadow:0 0 25px rgba(37,211,102,0.35);color:#04140d;}
+  .btn-print{background:linear-gradient(90deg,var(--yellow),var(--orange));box-shadow:0 0 25px rgba(255,224,138,0.3);}
 
   .cert-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
 
   .quiz-result{text-align:center;padding:50px 20px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);margin-top:20px;}
-  .quiz-result .score{font-family:'Orbitron',sans-serif;font-size:3rem;margin:16px 0;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .quiz-result p{color:var(--muted);max-width:460px;margin:0 auto;}
+  .quiz-result .score{font-family:var(--font-display);font-size:3rem;margin:16px 0;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .quiz-result p{color:var(--muted);max-width:620px;margin:0 auto;}
+  .result-stats{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin:20px 0 6px;}
+  .result-stats div{font-family:var(--font-display);font-size:.68rem;letter-spacing:1px;color:var(--muted);}
+  .result-stats b{display:block;font-size:1.15rem;color:var(--cyan);margin-top:4px;}
+  .review-block{max-width:760px;margin:26px auto 0;text-align:left;border:1px dashed rgba(255,143,163,0.4);border-radius:14px;padding:18px 20px;background:rgba(255,143,163,0.04);}
+  .review-block h5{font-family:var(--font-display);color:var(--red);font-size:.8rem;letter-spacing:1px;margin-bottom:12px;}
+  .review-item{border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:12px;margin-bottom:12px;}
+  .review-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .review-item .ri-q{font-weight:700;font-size:.9rem;color:var(--text);}
+  .review-item .ri-a{font-size:.86rem;color:var(--green);margin-top:6px;}
+  .review-item .ri-b{font-size:.86rem;color:var(--muted);margin-top:6px;}
+  .review-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .review-tag{
+    font-size:.75rem;padding:6px 14px;border-radius:16px;cursor:pointer;
+    border:1px solid rgba(95,242,242,0.4);color:var(--cyan);background:rgba(95,242,242,0.05);transition:.3s;
+  }
+  .review-tag:hover{background:rgba(95,242,242,0.15);}
 
   .certificate-section{
     margin-top:30px;text-align:center;padding:28px 24px;border-radius:18px;
     background:rgba(124,255,203,0.04);border:1px solid rgba(124,255,203,0.3);
     box-shadow:0 0 25px rgba(124,255,203,0.12);
   }
-  .certificate-section h4{font-family:'Orbitron',sans-serif;color:var(--green);margin-bottom:10px;font-size:1.1rem;}
+  .certificate-section h4{font-family:var(--font-display);color:var(--green);margin-bottom:10px;font-size:1.1rem;}
   .certificate-section p{color:var(--muted);margin-bottom:16px;font-size:.92rem;}
   .name-input{
     padding:12px 20px;border-radius:10px;border:1px solid rgba(95,242,242,0.3);
-    background:rgba(255,255,255,0.03);color:var(--text);font-family:'Rajdhani',sans-serif;
+    background:rgba(255,255,255,0.03);color:var(--text);font-family:var(--font-body);
     font-size:1rem;width:100%;max-width:320px;margin:0 auto;display:block;text-align:center;
   }
   .name-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 14px rgba(95,242,242,0.3);}
@@ -238,15 +335,15 @@
   .toast{
     position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
     background:rgba(12,16,36,0.95);border:1px solid rgba(95,242,242,0.4);
-    color:var(--text);padding:14px 26px;border-radius:14px;font-size:.9rem;
-    box-shadow:0 0 25px rgba(95,242,242,0.25);z-index:999;transition:transform .5s ease;
-    font-family:'Rajdhani',sans-serif;
+    color:var(--text);padding:14px 26px;border-radius:14px;font-size:.9rem;max-width:92vw;text-align:center;
+    box-shadow:0 0 25px rgba(95,242,242,0.25);z-index:1200;transition:transform .5s ease;
+    font-family:var(--font-body);
   }
   .toast.show{transform:translateX(-50%) translateY(0);}
 
   .modal-overlay{
-    position:fixed;inset:0;background:rgba(5,6,15,0.75);backdrop-filter:blur(6px);
-    display:none;align-items:center;justify-content:center;z-index:1000;
+    position:fixed;inset:0;background:rgba(5,6,15,0.78);backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;overflow-y:auto;
   }
   .modal-overlay.show{display:flex;}
   .modal-box{
@@ -254,30 +351,137 @@
     border-radius:20px;padding:34px 30px;max-width:400px;text-align:center;
     box-shadow:0 0 40px rgba(255,143,163,0.2);
   }
+  .modal-box.cyan-box{border-color:rgba(95,242,242,0.4);box-shadow:0 0 40px rgba(95,242,242,0.2);max-width:760px;}
   .modal-box .icon{font-size:2.5rem;margin-bottom:14px;}
-  .modal-box h3{font-family:'Orbitron',sans-serif;color:var(--red);margin-bottom:12px;font-size:1.1rem;}
+  .modal-box h3{font-family:var(--font-display);color:var(--red);margin-bottom:12px;font-size:1.1rem;}
+  .modal-box.cyan-box h3{color:var(--cyan);}
   .modal-box p{color:var(--muted);font-size:.9rem;margin-bottom:24px;}
-  .modal-actions{display:flex;gap:12px;justify-content:center;}
+  .modal-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .help-list{text-align:left;color:var(--muted);font-size:.88rem;padding-left:18px;margin-bottom:22px;}
+  .help-list li{margin-bottom:9px;}
+  .help-list b{color:var(--cyan);}
+  #certPreview{width:100%;border-radius:12px;border:1px solid rgba(95,242,242,0.3);display:block;margin-bottom:20px;}
   .btn-cancel{
-    font-family:'Orbitron',sans-serif;font-size:.75rem;color:var(--muted);
+    font-family:var(--font-display);font-size:.75rem;color:var(--muted);
     background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.15);
     padding:10px 22px;border-radius:20px;cursor:pointer;transition:.4s;
   }
   .btn-cancel:hover{background:rgba(255,255,255,0.08);}
   .btn-confirm-danger{
-    font-family:'Orbitron',sans-serif;font-size:.75rem;color:#1a0710;
+    font-family:var(--font-display);font-size:.75rem;color:#1a0710;
     background:linear-gradient(90deg,var(--red),var(--magenta));border:none;
     padding:10px 22px;border-radius:20px;cursor:pointer;transition:.4s;
   }
   .btn-confirm-danger:hover{transform:translateY(-2px);}
+  .btn-confirm-cyan{
+    font-family:var(--font-display);font-size:.75rem;color:#04181d;
+    background:linear-gradient(90deg,var(--cyan),var(--green));border:none;
+    padding:10px 22px;border-radius:20px;cursor:pointer;transition:.4s;
+  }
+  .btn-confirm-cyan:hover{transform:translateY(-2px);}
 
-  footer{position:relative;z-index:1;text-align:center;padding:40px 20px 60px;color:var(--muted);font-size:.85rem;font-family:'Orbitron',sans-serif;letter-spacing:1px;}
+  .to-top{
+    position:fixed;right:20px;bottom:24px;z-index:900;display:none;
+    width:46px;height:46px;border-radius:50%;cursor:pointer;
+    background:rgba(12,16,36,0.9);border:1px solid rgba(95,242,242,0.45);color:var(--cyan);
+    font-size:1.1rem;box-shadow:0 0 20px rgba(95,242,242,0.25);transition:.3s;
+  }
+  .to-top.show{display:block;}
+  .to-top:hover{background:rgba(95,242,242,0.15);transform:translateY(-3px);}
+
+
+  /* ---------- REGISTRO DE EVALUACIONES ---------- */
+  .reg-input{
+    padding:9px 14px;border-radius:20px;border:1px solid rgba(95,242,242,0.3);
+    background:rgba(255,255,255,0.03);color:var(--text);font-family:var(--font-body);
+    font-size:.86rem;min-width:210px;flex:1 1 210px;
+  }
+  .reg-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 12px rgba(95,242,242,0.25);}
+  .registro-stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;}
+  .reg-chip{
+    font-family:var(--font-display);font-size:.62rem;letter-spacing:1.5px;color:var(--muted);
+    border:1px solid rgba(95,242,242,0.25);border-radius:14px;padding:12px 20px;background:rgba(95,242,242,0.04);text-align:center;
+  }
+  .reg-chip b{display:block;font-size:1.15rem;color:var(--cyan);margin-top:6px;letter-spacing:1px;}
+  .registro-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;}
+  .btn-ghost.danger{color:var(--red);border-color:rgba(255,143,163,0.45);}
+  .btn-ghost.danger:hover{background:rgba(255,143,163,0.1);}
+  .registro-table-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:16px;background:rgba(255,255,255,0.02);}
+  .registro-table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:620px;}
+  .registro-table th{
+    font-family:var(--font-display);font-size:.62rem;letter-spacing:1.5px;color:var(--cyan);
+    text-align:left;padding:14px 16px;border-bottom:1px solid rgba(95,242,242,0.25);white-space:nowrap;
+  }
+  .registro-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);color:var(--text);}
+  .registro-table tr:last-child td{border-bottom:none;}
+  .registro-table tbody tr:hover{background:rgba(95,242,242,0.05);}
+  .registro-table td.num{font-family:var(--font-display);font-size:.76rem;color:var(--cyan);}
+  .reg-ok{color:var(--green);font-family:var(--font-display);font-size:.68rem;letter-spacing:1px;}
+  .reg-no{color:var(--red);font-family:var(--font-display);font-size:.68rem;letter-spacing:1px;}
+  .registro-empty{
+    text-align:center;color:var(--muted);font-size:.92rem;padding:50px 22px;border:1px dashed rgba(95,242,242,0.25);border-radius:16px;
+  }
+
+  /* ---------- FOOTER / CRÉDITO ---------- */
+  footer{position:relative;z-index:1;text-align:center;padding:46px 20px 60px;color:var(--muted);font-size:.85rem;font-family:var(--font-display);letter-spacing:1px;}
+  .credit-plate{
+    display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+    margin:0 auto 26px;padding:24px 46px;position:relative;
+    background:linear-gradient(180deg, rgba(95,242,242,0.07), rgba(242,108,224,0.05));
+    border:1px solid rgba(95,242,242,0.35);
+    border-radius:18px;
+    animation:softGlowCyan 6s ease-in-out infinite;
+  }
+  .credit-plate::before,.credit-plate::after{
+    content:'';position:absolute;width:16px;height:16px;border:2px solid var(--cyan);
+  }
+  .credit-plate::before{top:-1px;left:-1px;border-right:none;border-bottom:none;border-radius:18px 0 0 0;}
+  .credit-plate::after{bottom:-1px;right:-1px;border-left:none;border-top:none;border-radius:0 0 18px 0;}
+  .credit-kicker{
+    font-family:var(--font-display);font-size:.62rem;letter-spacing:5px;
+    color:var(--yellow);margin-bottom:8px;
+  }
+  .credit-by{
+    font-family:var(--font-body);font-size:.78rem;letter-spacing:3px;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .credit-name{
+    font-family:var(--font-display);font-weight:900;
+    font-size:clamp(1.05rem,3.6vw,1.75rem);letter-spacing:3px;line-height:1.3;
+    background:linear-gradient(100deg,#bff7ff 0%, #5ff2f2 30%, #f26ce0 70%, #a78bfa 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 12px rgba(95,242,242,0.45)) drop-shadow(0 0 26px rgba(242,108,224,0.3));
+    padding:2px 0;
+  }
+  .credit-year{
+    font-family:var(--font-display);font-size:.85rem;letter-spacing:4px;
+    color:var(--cyan);margin-top:6px;
+    text-shadow:0 0 12px rgba(95,242,242,0.5);
+  }
+  .credit-dash{
+    width:70px;height:2px;margin-top:12px;
+    background:linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
+    box-shadow:0 0 10px rgba(95,242,242,0.5);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .credit-name{animation:creditShift 12s ease-in-out infinite;background-size:180% 100%;}
+    @keyframes creditShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+  }
+  .footer-line{margin:0;opacity:.7;font-size:.78rem;}
 
   ::-webkit-scrollbar{width:10px;}
   ::-webkit-scrollbar-track{background:var(--bg1);}
   ::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan),var(--purple));border-radius:10px;}
 
-  @media(max-width:600px){nav.tabs-nav{gap:6px;}.tab-btn{font-size:.75rem;padding:8px 14px;}}
+  @media(max-width:700px){
+    nav.tabs-nav{gap:6px;padding:12px 10px;}
+    .tab-btn{font-size:.75rem;padding:8px 14px;}
+    .top-bar{padding:14px 16px 0;}
+    .search-wrap{flex:1 1 100%;max-width:none;}
+    .credit-plate{padding:20px 22px;}
+    main{padding:36px 16px 80px;}
+    .topic-nav{justify-content:center;}
+  }
 </style>
 </head>
 <body>
@@ -286,7 +490,16 @@
 <div class="particles" id="particles"></div>
 
 <div class="top-bar">
-  <button class="btn-reset" id="resetProgressBtn">🔄 Reiniciar Progreso</button>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="search" id="searchInput" class="search-input" placeholder="Buscar en la resolución (ej: proporcionalidad, AML, extranjeros...)" aria-label="Buscar en el contenido de la resolución" autocomplete="off">
+    <button class="search-clear" id="searchClear" type="button" aria-label="Borrar búsqueda">✕</button>
+    <div class="search-results" id="searchResults" role="listbox" aria-label="Resultados de búsqueda"></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn-help" id="helpBtn" type="button">❔ Ayuda</button>
+    <button class="btn-reset" id="resetProgressBtn" type="button">🔄 Reiniciar Progreso</button>
+  </div>
 </div>
 
 <header class="hero">
@@ -299,23 +512,25 @@
   <div class="progress-wrap">
     <div class="progress-label">PROGRESO DE LECTURA: <span id="progressText">0/6</span> TEMAS</div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <p class="storage-note" id="storageNote">⚠ Este navegador no permite guardar el progreso. Al cerrar la página se perderá el avance.</p>
   </div>
 </header>
 
-<nav class="tabs-nav" id="tabsNav">
-  <button class="tab-btn active" data-tab="variables">Variables de Conducta</button>
-  <button class="tab-btn" data-tab="seguridad">Seguridad</button>
-  <button class="tab-btn" data-tab="riesgo">Percepción del Riesgo</button>
-  <button class="tab-btn" data-tab="respuesta">Respuesta Razonable</button>
-  <button class="tab-btn" data-tab="sistema">Sistema de Intervención</button>
-  <button class="tab-btn" data-tab="principios">Principios Rectores</button>
-  <button class="tab-btn quiz-btn locked" data-tab="quiz" id="quizTabBtn">🔒 Evaluación (15 preguntas)</button>
+<nav class="tabs-nav" id="tabsNav" role="tablist" aria-label="Temas de la resolución">
+  <button class="tab-btn active" data-tab="variables" id="tab-variables" role="tab" aria-selected="true" aria-controls="variables">Variables de Conducta</button>
+  <button class="tab-btn" data-tab="seguridad" id="tab-seguridad" role="tab" aria-selected="false" aria-controls="seguridad">Seguridad</button>
+  <button class="tab-btn" data-tab="riesgo" id="tab-riesgo" role="tab" aria-selected="false" aria-controls="riesgo">Percepción del Riesgo</button>
+  <button class="tab-btn" data-tab="respuesta" id="tab-respuesta" role="tab" aria-selected="false" aria-controls="respuesta">Respuesta Razonable</button>
+  <button class="tab-btn" data-tab="sistema" id="tab-sistema" role="tab" aria-selected="false" aria-controls="sistema">Sistema de Intervención</button>
+  <button class="tab-btn" data-tab="principios" id="tab-principios" role="tab" aria-selected="false" aria-controls="principios">Principios Rectores</button>
+  <button class="tab-btn quiz-btn locked" data-tab="quiz" id="quizTabBtn" role="tab" aria-selected="false" aria-controls="quiz">🔒 Evaluación (15 preguntas)</button>
+  <button class="tab-btn" data-tab="registro" id="tab-registro" role="tab" aria-selected="false" aria-controls="registro">📋 Registro</button>
 </nav>
 
 <main>
 
   <!-- VARIABLES DE CONDUCTA -->
-  <section id="variables" class="tab-content active">
+  <section id="variables" class="tab-content active" role="tabpanel" aria-labelledby="tab-variables">
     <h2 class="section-title">Variables de la <span>Conducta</span></h2>
     <p class="section-desc">Clasificación progresiva del comportamiento del ciudadano frente a la intervención policial, base para determinar el nivel de respuesta.</p>
     <div class="escalation-bar"><div class="scanner"></div></div>
@@ -344,7 +559,7 @@
   </section>
 
   <!-- SEGURIDAD -->
-  <section id="seguridad" class="tab-content">
+  <section id="seguridad" class="tab-content" role="tabpanel" aria-labelledby="tab-seguridad">
     <h2 class="section-title">Modelo de <span>Seguridad</span></h2>
     <p class="section-desc">El uso proporcional y diferenciado de la fuerza exige autoridad respaldada en equipamiento y comunicación, con personal formado, entrenado y equipado.</p>
     <div class="cards-grid">
@@ -360,7 +575,7 @@
   </section>
 
   <!-- PERCEPCIÓN DEL RIESGO -->
-  <section id="riesgo" class="tab-content">
+  <section id="riesgo" class="tab-content" role="tabpanel" aria-labelledby="tab-riesgo">
     <h2 class="section-title">Percepción del <span>Riesgo</span></h2>
     <p class="section-desc">Nivel de amenaza percibido por el uniformado durante el procedimiento, determinante para calibrar la respuesta.</p>
     <div class="escalation-bar"><div class="scanner"></div></div>
@@ -389,7 +604,7 @@
   </section>
 
   <!-- RESPUESTA RAZONABLE -->
-  <section id="respuesta" class="tab-content">
+  <section id="respuesta" class="tab-content" role="tabpanel" aria-labelledby="tab-respuesta">
     <h2 class="section-title">Respuesta <span>Razonable</span></h2>
     <p class="section-desc">Conjunto de técnicas y tácticas graduales para responder de forma proporcional a la conducta manifestada.</p>
     <div class="cards-grid">
@@ -423,7 +638,7 @@
   </section>
 
   <!-- SISTEMA DE INTERVENCIÓN -->
-  <section id="sistema" class="tab-content">
+  <section id="sistema" class="tab-content" role="tabpanel" aria-labelledby="tab-sistema">
     <h2 class="section-title">Sistema de <span>Intervención Policial</span></h2>
     <p class="section-desc">Entrenamiento y reentrenamiento continuo del uniformado en cuatro niveles de capacitación.</p>
     <div class="cards-grid">
@@ -451,7 +666,7 @@
   </section>
 
   <!-- PRINCIPIOS -->
-  <section id="principios" class="tab-content">
+  <section id="principios" class="tab-content" role="tabpanel" aria-labelledby="tab-principios">
     <h2 class="section-title">Principios <span>Rectores</span></h2>
     <p class="section-desc">Fundamentos que orientan toda actuación policial en el uso de la fuerza.</p>
     <div class="cards-grid">
@@ -495,9 +710,9 @@
   </section>
 
   <!-- QUIZ -->
-  <section id="quiz" class="tab-content">
+  <section id="quiz" class="tab-content" role="tabpanel" aria-labelledby="quizTabBtn">
     <h2 class="section-title">Evaluación de <span>Conocimientos</span></h2>
-    <p class="section-desc">15 preguntas sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza.</p>
+    <p class="section-desc">15 preguntas seleccionadas al azar de un banco de 36, sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza. Se aprueba con el 70 % o más.</p>
 
     <div id="quizLocked" class="quiz-locked">
       <div class="lock-icon">🔒</div>
@@ -510,29 +725,103 @@
 
     <div id="quizContent" style="display:none;">
       <div id="prevPassBanner"></div>
-      <form id="quizForm"></form>
+
+      <div class="quiz-toolbar">
+        <div class="qt-left">
+          <input type="text" id="evalName" class="reg-input" placeholder="Nombre del evaluado (para el registro)" maxlength="60" aria-label="Nombre del evaluado">
+          <label class="chk-inline"><input type="checkbox" id="shuffleChk" checked> Aleatorizar preguntas y opciones</label>
+          <span class="qt-stat" id="attemptStat">INTENTOS: <b>0</b> · MEJOR: <b>—</b></span>
+        </div>
+        <div class="qt-right">
+          <span class="qt-stat">⏱ <b id="quizTimer">00:00</b></span>
+          <span class="qt-stat">RESPONDIDAS: <b id="answeredCount">0</b>/<span id="answeredTotal">15</span></span>
+        </div>
+        <div class="live-progress"><i id="liveProgressFill"></i></div>
+      </div>
+
+      <form id="quizForm" novalidate></form>
+
       <div class="quiz-submit-wrap">
         <button type="button" class="btn-neon" id="submitQuiz">CALIFICAR EVALUACIÓN</button>
+        <button type="button" class="btn-cancel" id="clearQuizBtn">Borrar respuestas</button>
       </div>
       <div id="quizResult" class="quiz-result" style="display:none;"></div>
     </div>
   </section>
 
+  <!-- REGISTRO DE EVALUACIONES -->
+  <section id="registro" class="tab-content" role="tabpanel" aria-labelledby="tab-registro">
+    <h2 class="section-title">Registro de <span>Evaluaciones</span></h2>
+    <p class="section-desc">Historial de los intentos calificados en este equipo. Pensado para instructores que registran a varios policías: nombre, aciertos, tiempo y estado.</p>
+    <div class="registro-stats" id="registroStats"></div>
+    <div class="registro-actions">
+      <button class="btn-ghost" id="exportCsvBtn" type="button">⬇ Exportar a Excel (CSV)</button>
+      <button class="btn-ghost" id="printRegistroBtn" type="button">🖨 Imprimir registro</button>
+      <button class="btn-ghost danger" id="clearRegistroBtn" type="button">🗑 Borrar registro</button>
+    </div>
+    <div class="registro-table-wrap" id="registroTableWrap"></div>
+  </section>
+
 </main>
 
 <footer>
-  RESOLUCIÓN 04240 · 01 DIC 2025 — POLICÍA NACIONAL DE COLOMBIA
+  <div class="credit-plate">
+    <span class="credit-kicker">MÓDULO DE FORMACIÓN DIGITAL</span>
+    <span class="credit-by">creado por</span>
+    <span class="credit-name">"IT. WILSON ROJAS"</span>
+    <span class="credit-year">CENOP - 2026</span>
+    <span class="credit-dash" aria-hidden="true"></span>
+  </div>
+  <p class="footer-line">RESOLUCIÓN 04240 · 01 DIC 2025 — POLICÍA NACIONAL DE COLOMBIA</p>
 </footer>
 
-<!-- Modal confirmación reset -->
-<div class="modal-overlay" id="resetModal">
+<button class="to-top" id="toTopBtn" type="button" title="Volver arriba" aria-label="Volver arriba">↑</button>
+
+<!-- Modal genérico de confirmación -->
+<div class="modal-overlay" id="confirmModal">
   <div class="modal-box">
-    <div class="icon">⚠️</div>
-    <h3>¿Reiniciar todo el progreso?</h3>
-    <p>Se borrará tu historial de lectura, resultados del quiz y nombre guardado. Esta acción no se puede deshacer.</p>
+    <div class="icon" id="confirmIcon">⚠️</div>
+    <h3 id="confirmTitle">Confirmar</h3>
+    <p id="confirmText">¿Deseas continuar?</p>
     <div class="modal-actions">
-      <button class="btn-cancel" id="cancelResetBtn">Cancelar</button>
-      <button class="btn-confirm-danger" id="confirmResetBtn">Sí, reiniciar</button>
+      <button class="btn-cancel" id="confirmCancel" type="button">Cancelar</button>
+      <button class="btn-confirm-danger" id="confirmOk" type="button">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de ayuda -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-box cyan-box">
+    <div class="icon">🧭</div>
+    <h3>Cómo usar este módulo</h3>
+    <ul class="help-list">
+      <li><b>Temas:</b> usa las pestañas o los botones <b>Anterior / Siguiente</b> al final de cada tema. Cada tema que abres queda marcado como leído ✓, y puedes marcarlo o desmarcarlo con el botón <b>Tema leído</b>.</li>
+      <li><b>Buscador:</b> escribe cualquier palabra (por ejemplo "AML" o "proporcionalidad") y el sistema te lleva al punto exacto del documento.</li>
+      <li><b>Evaluación:</b> se desbloquea al leer los 6 temas. Cada intento toma <b>15 preguntas al azar de un banco de 36</b>, con cronómetro y contador de respondidas. Escribe el nombre del evaluado para que quede en el registro y en el certificado.</li>
+      <li><b>Registro:</b> la pestaña <b>📋 Registro</b> guarda cada intento calificado (nombre, aciertos, %, tiempo y estado). Sirve para instructores: puedes <b>exportar a Excel (CSV)</b> o imprimir la lista. Se borra aparte, sin afectar tu progreso.</li>
+      <li><b>Certificado:</b> al aprobar con 70 % o más puedes verlo, descargarlo, imprimirlo o compartirlo. Incluye código de verificación y espacios de firma.</li>
+      <li><b>Teclado:</b> flechas ← → cambian de tema; Tab navega por los botones.</li>
+      <li><b>Reiniciar:</b> borra el progreso, los intentos y el certificado guardados.</li>
+    </ul>
+    <div class="modal-actions">
+      <button class="btn-confirm-cyan" id="helpClose" type="button">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de certificado -->
+<div class="modal-overlay" id="certModal">
+  <div class="modal-box cyan-box">
+    <div class="icon">📜</div>
+    <h3 id="certModalTitle">Certificado generado</h3>
+    <p id="certModalSub">Revisa tu certificado antes de descargarlo.</p>
+    <img id="certPreview" alt="Vista previa del certificado de aprobación">
+    <div class="modal-actions">
+      <button class="btn-cancel" id="certClose" type="button">Cerrar</button>
+      <button class="btn-confirm-cyan" id="certDownload2" type="button">⬇ Descargar</button>
+      <button class="btn-confirm-cyan" id="certPrint" type="button">🖨 Imprimir</button>
+      <button class="btn-confirm-cyan" id="certShare2" type="button">📤 Compartir</button>
     </div>
   </div>
 </div>
@@ -542,349 +831,1177 @@
 <canvas id="certCanvas" width="1400" height="990" style="display:none;"></canvas>
 
 <script>
-  /* =========================================================
-     STORAGE KEYS
-  ========================================================= */
-  const LS_VISITED = 'res04240_visitedTabs';
-  const LS_QUIZ_PASSED = 'res04240_quizPassed';
-  const LS_QUIZ_SCORE = 'res04240_quizScore';
-  const LS_QUIZ_TOTAL = 'res04240_quizTotal';
-  const LS_QUIZ_PERCENT = 'res04240_quizPercentage';
-  const LS_QUIZ_DATE = 'res04240_quizDate';
-  const LS_CERT_NAME = 'res04240_certName';
-  const ALL_KEYS = [LS_VISITED, LS_QUIZ_PASSED, LS_QUIZ_SCORE, LS_QUIZ_TOTAL, LS_QUIZ_PERCENT, LS_QUIZ_DATE, LS_CERT_NAME];
+(function(){
+  'use strict';
 
-  const tabNames = {
+  /* =========================================================
+     ALMACENAMIENTO SEGURO
+     (evita que la página falle si el navegador bloquea el guardado)
+  ========================================================= */
+  var store = {
+    ok: true,
+    get: function(k){
+      try{ return localStorage.getItem(k); }
+      catch(e){ store.ok = false; return null; }
+    },
+    set: function(k, v){
+      try{ localStorage.setItem(k, v); return true; }
+      catch(e){ store.ok = false; return false; }
+    },
+    del: function(k){
+      try{ localStorage.removeItem(k); return true; }
+      catch(e){ store.ok = false; return false; }
+    }
+  };
+
+  var LS_VISITED = 'res04240_visitedTabs';
+  var LS_QUIZ_PASSED = 'res04240_quizPassed';
+  var LS_QUIZ_SCORE = 'res04240_quizScore';
+  var LS_QUIZ_TOTAL = 'res04240_quizTotal';
+  var LS_QUIZ_PERCENT = 'res04240_quizPercentage';
+  var LS_QUIZ_DATE = 'res04240_quizDate';
+  var LS_CERT_NAME = 'res04240_certName';
+  var LS_QUIZ_TIME = 'res04240_quizTime';
+  var LS_QUIZ_ATTEMPTS = 'res04240_quizAttempts';
+  var LS_QUIZ_BEST = 'res04240_quizBest';
+  var LS_SHUFFLE = 'res04240_shuffle';
+  var LS_HISTORIAL = 'res04240_historial';
+  var LS_EVAL_NAME = 'res04240_evalName';
+  var LS_BEST_PASS = 'res04240_bestPass';
+  var ALL_KEYS = [LS_VISITED, LS_QUIZ_PASSED, LS_QUIZ_SCORE, LS_QUIZ_TOTAL, LS_QUIZ_PERCENT,
+                  LS_QUIZ_DATE, LS_CERT_NAME, LS_QUIZ_TIME, LS_QUIZ_ATTEMPTS, LS_QUIZ_BEST, LS_SHUFFLE,
+                  LS_HISTORIAL, LS_EVAL_NAME, LS_BEST_PASS];
+
+  var tabNames = {
     variables:'Variables de Conducta', seguridad:'Seguridad', riesgo:'Percepción del Riesgo',
     respuesta:'Respuesta Razonable', sistema:'Sistema de Intervención', principios:'Principios Rectores'
   };
-  const requiredTabs = Object.keys(tabNames);
+  var requiredTabs = Object.keys(tabNames);
+  var TOTAL_TEMAS = requiredTabs.length;
 
-  let visitedTabs = new Set(['variables']);
+  /* ---------- estado ---------- */
+  var visitedTabs = ['variables'];
   try{
-    const saved = JSON.parse(localStorage.getItem(LS_VISITED) || '[]');
-    saved.forEach(t=>{ if(requiredTabs.includes(t)) visitedTabs.add(t); });
+    var guardado = JSON.parse(store.get(LS_VISITED) || '[]');
+    if(Array.isArray(guardado)) guardado.forEach(function(t){ if(requiredTabs.indexOf(t) !== -1 && visitedTabs.indexOf(t) === -1) visitedTabs.push(t); });
   }catch(e){}
-
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const contents = document.querySelectorAll('.tab-content');
-  const quizTabBtn = document.getElementById('quizTabBtn');
-
-  function saveVisited(){ localStorage.setItem(LS_VISITED, JSON.stringify([...visitedTabs])); }
-
-  function showToast(msg){
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(()=> toast.classList.remove('show'), 3000);
+  if(!store.ok){
+    var nota = document.getElementById('storageNote');
+    if(nota) nota.classList.add('show');
   }
 
-  function updateProgressUI(){
-    const count = visitedTabs.size;
-    const total = requiredTabs.length;
-    document.getElementById('progressText').textContent = `${count}/${total}`;
-    document.getElementById('progressFill').style.width = (count/total*100)+'%';
-    document.getElementById('miniProgressFill').style.width = (count/total*100)+'%';
-    document.getElementById('miniProgressText').textContent = `${count} de ${total} temas leídos`;
+  var tabBtns = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  var contents = Array.prototype.slice.call(document.querySelectorAll('.tab-content'));
+  var quizTabBtn = document.getElementById('quizTabBtn');
 
-    const missing = requiredTabs.filter(t=>!visitedTabs.has(t));
-    const missingList = document.getElementById('missingTabsList');
-    missingList.innerHTML = '';
-    missing.forEach(t=>{
-      const chip = document.createElement('span');
-      chip.className='missing-chip';
-      chip.textContent = 'Falta: '+tabNames[t];
-      missingList.appendChild(chip);
+  function saveVisited(){ store.set(LS_VISITED, JSON.stringify(visitedTabs)); }
+  function esVisitado(t){ return visitedTabs.indexOf(t) !== -1; }
+
+  /* ---------- utilidades ---------- */
+  var toastTimer = null;
+  function showToast(msg){
+    var toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 3200);
+  }
+  function escapar(t){
+    return String(t).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
     });
+  }
+  function sinAcentos(t){
+    return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  function mezclar(arr){
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+  function formatoTiempo(seg){
+    seg = Math.max(0, Math.round(seg));
+    var m = Math.floor(seg / 60), s = seg % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function fechaLarga(){
+    return new Date().toLocaleDateString('es-CO', {year:'numeric', month:'long', day:'numeric'});
+  }
 
-    tabBtns.forEach(b=>{
-      b.classList.remove('visited');
-      if(visitedTabs.has(b.dataset.tab)) b.classList.add('visited');
+  /* ---------- modal de confirmación genérico ---------- */
+  var confirmModal = document.getElementById('confirmModal');
+  var confirmAction = null;
+  function abrirConfirm(opciones){
+    var o = opciones || {};
+    document.getElementById('confirmIcon').textContent = o.icon || '⚠️';
+    document.getElementById('confirmTitle').textContent = o.title || 'Confirmar';
+    document.getElementById('confirmText').textContent = o.text || '¿Deseas continuar?';
+    var ok = document.getElementById('confirmOk');
+    ok.textContent = o.okLabel || 'Sí, continuar';
+    ok.className = o.cyan ? 'btn-confirm-cyan' : 'btn-confirm-danger';
+    confirmAction = o.onOk || null;
+    confirmModal.classList.add('show');
+  }
+  function cerrarConfirm(){ confirmModal.classList.remove('show'); confirmAction = null; }
+  document.getElementById('confirmOk').addEventListener('click', function(){
+    var fn = confirmAction;
+    cerrarConfirm();
+    if(typeof fn === 'function') fn();
+  });
+  document.getElementById('confirmCancel').addEventListener('click', cerrarConfirm);
+  confirmModal.addEventListener('click', function(e){ if(e.target === confirmModal) cerrarConfirm(); });
+
+  /* ---------- pestañas ---------- */
+  function activarTab(tabId, opciones){
+    var o = opciones || {};
+    var btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    if(!btn) return;
+
+    if(tabId === 'quiz' && quizTabBtn.classList.contains('locked')){
+      btn.animate(
+        [{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],
+        {duration:400}
+      );
+      showToast('🔒 Primero lee los 6 temas para desbloquear la evaluación.');
+      return;
+    }
+
+    tabBtns.forEach(function(b){
+      b.classList.remove('active');
+      b.setAttribute('aria-selected','false');
     });
+    contents.forEach(function(c){ c.classList.remove('active'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    var seccion = document.getElementById(tabId);
+    if(seccion) seccion.classList.add('active');
 
-    if(count>=total){
-      quizTabBtn.classList.remove('locked');
-      quizTabBtn.classList.add('unlocked');
-      quizTabBtn.textContent = '🔓 Evaluación (15 preguntas)';
-      document.getElementById('quizLocked').style.display='none';
-      document.getElementById('quizContent').style.display='block';
-      renderPrevPassBanner();
-    } else {
-      quizTabBtn.classList.add('locked');
-      quizTabBtn.classList.remove('unlocked');
-      quizTabBtn.textContent = '🔒 Evaluación (15 preguntas)';
-      document.getElementById('quizLocked').style.display='block';
-      document.getElementById('quizContent').style.display='none';
+    if(requiredTabs.indexOf(tabId) !== -1 && !esVisitado(tabId)){
+      visitedTabs.push(tabId);
+      saveVisited();
+      updateProgressUI();
+    }
+    if(tabId === 'registro') renderRegistro();
+    observarTarjetas();
+    actualizarTogglesLectura();
+    if(tabId === 'quiz') asegurarCronometro();
+
+    if(o.scroll !== false){
+      var destino = seccion;
+      if(destino){
+        var y = destino.getBoundingClientRect().top + window.pageYOffset - 90;
+        window.scrollTo({top: y, behavior: (prefiereMenosMovimiento() ? 'auto' : 'smooth')});
+      }
     }
   }
 
-  function renderPrevPassBanner(){
-    const banner = document.getElementById('prevPassBanner');
-    const passed = localStorage.getItem(LS_QUIZ_PASSED) === 'true';
-    if(!passed){ banner.innerHTML=''; return; }
-
-    const score = localStorage.getItem(LS_QUIZ_SCORE);
-    const total = localStorage.getItem(LS_QUIZ_TOTAL);
-    const percentage = localStorage.getItem(LS_QUIZ_PERCENT);
-    const dateStr = new Date(localStorage.getItem(LS_QUIZ_DATE)).toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
-    const savedName = localStorage.getItem(LS_CERT_NAME) || '';
-
-    banner.innerHTML = `
-      <div class="prev-pass-banner">
-        <h4>🏆 Ya aprobaste esta evaluación</h4>
-        <p>Obtuviste ${score}/${total} (${percentage}%) el ${dateStr}.</p>
-        <div class="banner-actions">
-          <button class="btn-ghost" id="rewatchCertBtn">📜 Descargar certificado</button>
-          <button class="btn-ghost" id="rewatchShareBtn">📤 Compartir certificado</button>
-        </div>
-      </div>
-    `;
-    document.getElementById('rewatchCertBtn').addEventListener('click', ()=>{
-      const name = savedName || prompt('Ingresa tu nombre completo para el certificado:');
-      if(name && name.trim()){
-        localStorage.setItem(LS_CERT_NAME, name.trim());
-        generateCertificateBlob(name.trim(), parseInt(score), parseInt(total), parseInt(percentage), 'download');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){ activarTab(btn.dataset.tab); });
+    btn.addEventListener('keydown', function(e){
+      var i = tabBtns.indexOf(btn);
+      var destino = -1;
+      if(e.key === 'ArrowRight') destino = (i + 1) % tabBtns.length;
+      else if(e.key === 'ArrowLeft') destino = (i - 1 + tabBtns.length) % tabBtns.length;
+      else if(e.key === 'Home') destino = 0;
+      else if(e.key === 'End') destino = tabBtns.length - 1;
+      if(destino >= 0){
+        e.preventDefault();
+        tabBtns[destino].focus();
+        activarTab(tabBtns[destino].dataset.tab);
       }
     });
-    document.getElementById('rewatchShareBtn').addEventListener('click', ()=>{
-      const name = savedName || prompt('Ingresa tu nombre completo para el certificado:');
-      if(name && name.trim()){
-        localStorage.setItem(LS_CERT_NAME, name.trim());
-        generateCertificateBlob(name.trim(), parseInt(score), parseInt(total), parseInt(percentage), 'share');
-      }
+  });
+
+  /* ---------- progreso ---------- */
+  function updateProgressUI(){
+    var count = visitedTabs.length;
+    var total = TOTAL_TEMAS;
+    document.getElementById('progressText').textContent = count + '/' + total;
+    document.getElementById('progressFill').style.width = (count / total * 100) + '%';
+    document.getElementById('miniProgressFill').style.width = (count / total * 100) + '%';
+    document.getElementById('miniProgressText').textContent = count + ' de ' + total + ' temas leídos';
+
+    var faltantes = requiredTabs.filter(function(t){ return !esVisitado(t); });
+    var lista = document.getElementById('missingTabsList');
+    lista.innerHTML = '';
+    faltantes.forEach(function(t){
+      var chip = document.createElement('span');
+      chip.className = 'missing-chip';
+      chip.textContent = 'Falta: ' + tabNames[t];
+      chip.setAttribute('role','button');
+      chip.setAttribute('tabindex','0');
+      var ir = function(){ activarTab(t); };
+      chip.addEventListener('click', ir);
+      chip.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ir(); } });
+      lista.appendChild(chip);
     });
+
+    tabBtns.forEach(function(b){
+      b.classList.remove('visited');
+      if(b.dataset.tab !== 'quiz' && esVisitado(b.dataset.tab)) b.classList.add('visited');
+    });
+
+    if(count >= total){
+      quizTabBtn.classList.remove('locked');
+      quizTabBtn.classList.add('unlocked');
+      quizTabBtn.textContent = '🔓 Evaluación (15 preguntas)';
+      document.getElementById('quizLocked').style.display = 'none';
+      document.getElementById('quizContent').style.display = 'block';
+      /* el formulario se construye la primera vez que se desbloquea */
+      if(!quizForm.children.length){
+        prepararIntento();
+        renderQuiz();
+        actualizarEstadisticasIntento();
+      }
+      renderPrevPassBanner();
+    }else{
+      quizTabBtn.classList.add('locked');
+      quizTabBtn.classList.remove('unlocked');
+      quizTabBtn.textContent = '🔒 Evaluación (15 preguntas)';
+      document.getElementById('quizLocked').style.display = 'block';
+      document.getElementById('quizContent').style.display = 'none';
+    }
   }
 
-  tabBtns.forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(btn.dataset.tab === 'quiz' && quizTabBtn.classList.contains('locked')){
-        btn.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:400});
-        return;
-      }
-      tabBtns.forEach(b=>b.classList.remove('active'));
-      contents.forEach(c=>c.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.tab).classList.add('active');
+  /* ---------- navegación entre temas (botones al final de cada tema) ---------- */
+  function construirNavTemas(){
+    contents.forEach(function(sec){
+      if(sec.id === 'quiz' || sec.id === 'registro') return;   /* solo los 6 temas de lectura */
+      var nav = document.createElement('div');
+      nav.className = 'topic-nav';
+      var idx = requiredTabs.indexOf(sec.id);
+      var prev = idx > 0 ? requiredTabs[idx - 1] : null;
+      var next = idx < requiredTabs.length - 1 ? requiredTabs[idx + 1] : null;
+      nav.innerHTML =
+        '<div class="nav-group">' +
+          '<button class="btn-ghost" data-read="' + sec.id + '" type="button">Marcar como leído</button>' +
+        '</div>' +
+        '<div class="nav-group">' +
+          '<button class="btn-ghost" data-prev="' + (prev || '') + '" type="button" ' + (prev ? '' : 'disabled') + '>← Anterior</button>' +
+          '<button class="btn-ghost" data-next="' + (next || 'quiz') + '" type="button" ' + (next ? '' : 'disabled') + '>Siguiente tema →</button>' +
+        '</div>';
+      sec.appendChild(nav);
+    });
 
-      if(btn.dataset.tab !== 'quiz'){
-        visitedTabs.add(btn.dataset.tab);
+    document.querySelectorAll('[data-read]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var t = b.getAttribute('data-read');
+        if(esVisitado(t)){
+          visitedTabs = visitedTabs.filter(function(x){ return x !== t; });
+          showToast('↺ Tema desmarcado: ' + tabNames[t]);
+        }else{
+          visitedTabs.push(t);
+          showToast('✔ Tema leído: ' + tabNames[t]);
+        }
         saveVisited();
         updateProgressUI();
-      }
-
-      revealCards();
-      window.scrollTo({top: document.getElementById('tabsNav').offsetTop, behavior:'smooth'});
+        actualizarTogglesLectura();
+      });
     });
-  });
+    document.querySelectorAll('[data-prev]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var t = b.getAttribute('data-prev');
+        if(t) activarTab(t);
+      });
+    });
+    document.querySelectorAll('[data-next]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var t = b.getAttribute('data-next');
+        if(t === 'quiz' && quizTabBtn.classList.contains('locked')){
+          showToast('🔒 Completa los 6 temas para desbloquear la evaluación.');
+          return;
+        }
+        if(t) activarTab(t);
+      });
+    });
+  }
 
-  function revealCards(){
-    const cards = document.querySelectorAll('.tab-content.active .card');
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach((entry,i)=>{
+  function actualizarTogglesLectura(){
+    document.querySelectorAll('[data-read]').forEach(function(b){
+      var t = b.getAttribute('data-read');
+      var leido = esVisitado(t);
+      b.textContent = leido ? '✔ Tema leído' : 'Marcar como leído';
+      b.classList.toggle('done', leido);
+    });
+  }
+
+  /* ---------- animación de entrada de las tarjetas ---------- */
+  var cardObserver = null;
+  if('IntersectionObserver' in window){
+    cardObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
         if(entry.isIntersecting){
-          setTimeout(()=>entry.target.classList.add('in-view'), i*120);
-          observer.unobserve(entry.target);
+          entry.target.classList.add('in-view');
+          cardObserver.unobserve(entry.target);
         }
       });
-    },{threshold:0.15});
-    cards.forEach(c=>observer.observe(c));
+    }, {threshold:0.12});
   }
-  revealCards();
-  updateProgressUI();
-
-  /* ---- Reset progress ---- */
-  const resetModal = document.getElementById('resetModal');
-  document.getElementById('resetProgressBtn').addEventListener('click', ()=>{
-    resetModal.classList.add('show');
-  });
-  document.getElementById('cancelResetBtn').addEventListener('click', ()=>{
-    resetModal.classList.remove('show');
-  });
-  document.getElementById('confirmResetBtn').addEventListener('click', ()=>{
-    ALL_KEYS.forEach(k=> localStorage.removeItem(k));
-    resetModal.classList.remove('show');
-    showToast('✅ Progreso reiniciado. Recargando...');
-    setTimeout(()=> location.reload(), 1200);
-  });
-  resetModal.addEventListener('click', (e)=>{
-    if(e.target === resetModal) resetModal.classList.remove('show');
-  });
-
-  // ---- Particles ----
-  const particlesContainer = document.getElementById('particles');
-  const colors = ['#5ff2f2','#f26ce0','#a78bfa','#7dc4ff'];
-  for(let i=0;i<40;i++){
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    const size = Math.random()*4+2;
-    p.style.width = size+'px';
-    p.style.height = size+'px';
-    p.style.left = Math.random()*100+'vw';
-    p.style.background = colors[Math.floor(Math.random()*colors.length)];
-    p.style.animationDuration = (Math.random()*20+18)+'s';
-    p.style.animationDelay = (Math.random()*20)+'s';
-    p.style.boxShadow = `0 0 8px ${p.style.background}`;
-    particlesContainer.appendChild(p);
+  function observarTarjetas(){
+    document.querySelectorAll('.tab-content.active .card').forEach(function(card){
+      if(card.classList.contains('in-view')) return;
+      /* con movimiento reducido las tarjetas se muestran de una vez */
+      if(cardObserver && !prefiereMenosMovimiento()) cardObserver.observe(card);
+      else card.classList.add('in-view');
+    });
   }
+
+  /* ---------- buscador ---------- */
+  var indice = [];
+  function construirIndice(){
+    indice = [];
+    contents.forEach(function(sec){
+      if(sec.id === 'quiz' || sec.id === 'registro') return;
+      var tarjetas = sec.querySelectorAll('.card');
+      tarjetas.forEach(function(card){
+        var h3 = card.querySelector('h3');
+        indice.push({
+          tabId: sec.id,
+          titulo: h3 ? h3.textContent.trim() : (tabNames[sec.id] || sec.id),
+          texto: card.textContent.replace(/\s+/g,' ').trim(),
+          card: card
+        });
+      });
+      // sub-ítems (por ejemplo los criterios del principio de Necesidad)
+      sec.querySelectorAll('.sub-item').forEach(function(sub){
+        var tag = sub.querySelector('.sub-tag');
+        indice.push({
+          tabId: sec.id,
+          titulo: (tag ? tag.textContent.trim() : 'Detalle'),
+          texto: sub.textContent.replace(/\s+/g,' ').trim(),
+          card: sub
+        });
+      });
+    });
+  }
+
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+  var searchClear = document.getElementById('searchClear');
+  var searchTimer = null;
+
+  function cerrarResultados(){
+    searchResults.classList.remove('show');
+    searchResults.innerHTML = '';
+  }
+
+  function buscar(q){
+    var consulta = sinAcentos(q.trim());
+    if(consulta.length < 2){ cerrarResultados(); return; }
+    var encontrados = [];
+    indice.forEach(function(item){
+      var pos = sinAcentos(item.texto).indexOf(consulta);
+      if(pos === -1) return;
+      var inicio = Math.max(0, pos - 45);
+      var recorte = item.texto.substr(inicio, 130);
+      encontrados.push({
+        tabId: item.tabId, titulo: item.titulo, card: item.card,
+        snip: (inicio > 0 ? '…' : '') + recorte + '…',
+        peso: pos
+      });
+    });
+    encontrados.sort(function(a,b){ return a.peso - b.peso; });
+    encontrados = encontrados.slice(0, 8);
+
+    searchResults.innerHTML = '';
+    if(!encontrados.length){
+      searchResults.innerHTML = '<div class="search-empty">Sin resultados para “' + escapar(q) + '”.</div>';
+      searchResults.classList.add('show');
+      return;
+    }
+    encontrados.forEach(function(r){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'search-item';
+      btn.innerHTML = '<span class="si-tab">' + escapar(tabNames[r.tabId] || r.tabId) + '</span>' +
+                      '<span class="si-title">' + escapar(r.titulo) + '</span>' +
+                      '<span class="si-snip">' + escapar(r.snip) + '</span>';
+      btn.addEventListener('click', function(){
+        activarTab(r.tabId, {scroll:false});
+        cerrarResultados();
+        searchInput.value = '';
+        searchClear.classList.remove('show');
+        setTimeout(function(){
+          if(r.card.scrollIntoView) r.card.scrollIntoView({behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth', block:'center'});
+          r.card.classList.add('search-hit');
+          setTimeout(function(){ r.card.classList.remove('search-hit'); }, 2400);
+        }, 120);
+      });
+      searchResults.appendChild(btn);
+    });
+    searchResults.classList.add('show');
+  }
+
+  searchInput.addEventListener('input', function(){
+    searchClear.classList.toggle('show', searchInput.value.length > 0);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function(){ buscar(searchInput.value); }, 200);
+  });
+  searchInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      var primero = searchResults.querySelector('.search-item');
+      if(primero) primero.click();
+    }else if(e.key === 'Escape'){
+      cerrarResultados();
+    }
+  });
+  searchClear.addEventListener('click', function(){
+    searchInput.value = '';
+    searchClear.classList.remove('show');
+    cerrarResultados();
+    searchInput.focus();
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.search-wrap')) cerrarResultados();
+  });
 
   /* =========================================================
-     QUIZ: 15 PREGUNTAS
+     BANCO DE PREGUNTAS (15) · con retroalimentación y tema
   ========================================================= */
-  const quizData = [
-    { q:"1. ¿Qué caracteriza a la Resistencia Pasiva?",
-      options:["No acata órdenes pero no reacciona con violencia ni agrede físicamente","Se opone físicamente a las órdenes del uniformado","Utiliza objetos para causar lesiones leves","Representa amenaza directa contra la vida"], correct:0 },
-    { q:"2. La Resistencia Activa se define como:",
-      options:["Uso de armas de fuego contra el uniformado","Oposición física a las órdenes, pudiendo escalar en desafío sin convertirse en agresión física","Colaboración total con la autoridad","Lesiones corporales graves y permanentes"], correct:1 },
-    { q:"3. La Agresión No Letal o Moderada implica:",
-      options:["Uso de arma de fuego con intención letal","Ninguna forma de contacto físico","Fuerza moderada u objetos que causan lesiones leves, sin poner en riesgo la vida","Fuga inminente del infractor"], correct:2 },
-    { q:"4. La Agresión Grave o Letal se caracteriza por:",
-      options:["Comentarios verbales agresivos","Alto nivel de fuerza que puede provocar lesiones graves, permanentes o poner en riesgo la vida","Resistencia pasiva prolongada","Uso exclusivo de comunicación verbal"], correct:1 },
-    { q:"5. El Equipamiento, como componente de seguridad, se refiere a:",
-      options:["Habilidades de negociación del uniformado","Elementos dotados oficialmente: recursos materiales, técnicos y tecnológicos reglamentados","El estado emocional del ciudadano","El nivel de riesgo percibido"], correct:1 },
-    { q:"6. La Comunicación como componente de seguridad busca:",
-      options:["Incrementar el uso de la fuerza física","Reemplazar el equipamiento oficial","Fortalecer la atención al ciudadano y desescalar las variables de la conducta","Documentar el procedimiento policial únicamente"], correct:2 },
-    { q:"7. La Percepción del Riesgo 'Leve' corresponde a:",
-      options:["Amenaza directa e inminente contra la vida","Situaciones que no representan amenaza significativa para la integridad de nadie","Uso de armas de fuego por parte del ciudadano","Agresión múltiple contra el uniformado"], correct:1 },
-    { q:"8. El riesgo 'Leve a Moderada' se presenta cuando:",
-      options:["Existe un peligro inminente para la vida","El ciudadano colabora plenamente","Hay comportamientos que generan riesgo para el uniformado sin constituir peligro inminente","Se usan explosivos"], correct:2 },
-    { q:"9. 'Lesiones Moderadas a Graves' implica un aumento de amenaza mediante:",
-      options:["Comunicación verbal agresiva únicamente","Elementos contundentes, cortopunzantes u otros objetos","Resistencia pasiva","Falta de atención al ciudadano"], correct:1 },
-    { q:"10. 'Lesiones Graves a Letales' se presenta mediante:",
-      options:["Ataque con arma de fuego, arma blanca, explosivos o agresión múltiple","Negativa a mostrar documentos","Desacuerdo verbal con el procedimiento","Resistencia pasiva prolongada"], correct:0 },
-    { q:"11. La Fuerza Potencialmente Letal solo se puede usar cuando:",
-      options:["El ciudadano se niega a colaborar","Existe amenaza inminente de muerte o lesiones graves y otros medios resultan ineficaces","Se necesita agilizar un procedimiento administrativo","Hay resistencia pasiva del ciudadano"], correct:1 },
-    { q:"12. Las Técnicas y Tácticas de Comunicación en el sistema de intervención comprenden:",
-      options:["Verbalización, contacto visual, quinesia, proxemia y paralingüística","Uso exclusivo de armas menos letales","Inmovilización física inmediata","Uso de arma de fuego"], correct:0 },
-    { q:"13. El criterio Cualitativo del principio de Necesidad evalúa:",
-      options:["La cantidad exacta de fuerza a utilizar","El momento para cesar la fuerza","Si es indispensable emplear la fuerza o existen vías alternas para evitarla","El tipo de arma reglamentaria"], correct:2 },
-    { q:"14. El criterio Cuantitativo del principio de Necesidad exige:",
-      options:["Utilizar la máxima fuerza disponible","Utilizar la mínima cantidad de fuerza estrictamente indispensable para ser efectiva","Suspender el procedimiento de inmediato","Usar siempre armas menos letales"], correct:1 },
-    { q:"15. El principio de Proporcionalidad prohíbe expresamente:",
-      options:["El uso de comunicación verbal","El uso de técnicas de control físico","Implementar medidas extremas para proteger bienes de valor inferior a la vida o integridad física","El entrenamiento continuo del uniformado"], correct:2 }
+  /* Banco de 36 preguntas: cada intento toma 15 al azar (sin repetir dentro del mismo intento) */
+  var PREGUNTAS_POR_INTENTO = 15;
+  var bancoPreguntas = [
+    /* --- Variables de la conducta --- */
+    { q:"¿Qué caracteriza a la Resistencia Pasiva?", tab:'variables',
+      options:["No acata órdenes pero no reacciona con violencia ni agrede físicamente","Se opone físicamente a las órdenes del uniformado","Utiliza objetos para causar lesiones leves","Representa amenaza directa contra la vida"], correct:0,
+      why:"La resistencia pasiva es la no colaboración o el no acatamiento de órdenes, sin violencia ni agresión física." },
+    { q:"La Resistencia Activa se define como:", tab:'variables',
+      options:["Uso de armas de fuego contra el uniformado","Oposición física a las órdenes, pudiendo escalar en desafío sin convertirse en agresión física","Colaboración total con la autoridad","Lesiones corporales graves y permanentes"], correct:1,
+      why:"En la resistencia activa existe oposición física a las órdenes y puede escalar en desafío a la autoridad, pero no llega a la agresión física." },
+    { q:"La Agresión No Letal o Moderada implica:", tab:'variables',
+      options:["Uso de arma de fuego con intención letal","Ninguna forma de contacto físico","Fuerza moderada u objetos que causan lesiones leves, sin poner en riesgo la vida","Fuga inminente del infractor"], correct:2,
+      why:"Se aplica fuerza moderada o violencia física, incluso con objetos que generan lesiones leves, sin poner en riesgo la vida." },
+    { q:"La Agresión Grave o Letal se caracteriza por:", tab:'variables',
+      options:["Comentarios verbales agresivos","Alto nivel de fuerza que puede provocar lesiones graves, permanentes o poner en riesgo la vida","Resistencia pasiva prolongada","Uso exclusivo de comunicación verbal"], correct:1,
+      why:"Implica fuerza física intensa u objetos que provocan lesiones graves o permanentes, o que ponen en riesgo la vida." },
+    { q:"Un ciudadano que no colabora ni atiende las sugerencias del uniformado, pero sin violencia, se ubica en:", tab:'variables',
+      options:["Resistencia pasiva","Agresión grave o letal","Agresión no letal o moderada","Resistencia activa"], correct:0,
+      why:"No colaborar ni acatar órdenes o sugerencias, sin reaccionar con violencia, corresponde a la resistencia pasiva (nivel 01)." },
+
+    /* --- Seguridad --- */
+    { q:"El Equipamiento, como componente de seguridad, se refiere a:", tab:'seguridad',
+      options:["Habilidades de negociación del uniformado","Elementos dotados oficialmente: recursos materiales, técnicos y tecnológicos reglamentados","El estado emocional del ciudadano","El nivel de riesgo percibido"], correct:1,
+      why:"El equipamiento son los recursos materiales, técnicos y tecnológicos dotados oficialmente, según el servicio y la actividad de policía." },
+    { q:"La Comunicación como componente de seguridad busca:", tab:'seguridad',
+      options:["Incrementar el uso de la fuerza física","Reemplazar el equipamiento oficial","Fortalecer la atención al ciudadano y desescalar las variables de la conducta","Documentar el procedimiento policial únicamente"], correct:2,
+      why:"Es un proceso permanente de comunicación asertiva y de confianza que permite desescalar las variables de la conducta (Manual de Atención al Ciudadano)." },
+    { q:"El modelo de seguridad desarrollado en la resolución se compone de:", tab:'seguridad',
+      options:["Equipamiento y comunicación","Entrenamiento y sanciones","Vigilancia y control","Armas de fuego y esposas"], correct:0,
+      why:"El modelo de seguridad se apoya en dos componentes: A) Equipamiento y B) Comunicación, con personal formado, entrenado y equipado." },
+    { q:"La comunicación asertiva y de confianza, según el modelo, permite:", tab:'seguridad',
+      options:["Sustituir el procedimiento policial","Desescalar las variables de la conducta","Evitar el uso del equipamiento reglamentario","Aumentar el nivel de fuerza aplicado"], correct:1,
+      why:"La comunicación fortalece la atención al ciudadano y permite desescalar las variables de la conducta según el Manual de Atención al Ciudadano." },
+
+    /* --- Percepción del riesgo --- */
+    { q:"La Percepción del Riesgo 'Leve' corresponde a:", tab:'riesgo',
+      options:["Amenaza directa e inminente contra la vida","Situaciones que no representan amenaza significativa para la integridad de nadie","Uso de armas de fuego por parte del ciudadano","Agresión múltiple contra el uniformado"], correct:1,
+      why:"La conducta o el contexto no representan amenaza significativa para el uniformado, terceros o el intervenido." },
+    { q:"El riesgo 'Leve a Moderada' se presenta cuando:", tab:'riesgo',
+      options:["Existe un peligro inminente para la vida","El ciudadano colabora plenamente","Hay comportamientos que generan riesgo para el uniformado sin constituir peligro inminente","Se usan explosivos"], correct:2,
+      why:"Hay una variación de la conducta que genera riesgo para el uniformado, sin constituir un peligro inminente." },
+    { q:"'Lesiones Moderadas a Graves' implica un aumento de amenaza mediante:", tab:'riesgo',
+      options:["Comunicación verbal agresiva únicamente","Elementos contundentes, cortopunzantes u otros objetos","Resistencia pasiva","Falta de atención al ciudadano"], correct:1,
+      why:"El aumento considerable de la amenaza se da mediante elementos contundentes, cortopunzantes u otros objetos." },
+    { q:"'Lesiones Graves a Letales' se presenta mediante:", tab:'riesgo',
+      options:["Ataque con arma de fuego, arma blanca, explosivos o agresión múltiple","Negativa a mostrar documentos","Desacuerdo verbal con el procedimiento","Resistencia pasiva prolongada"], correct:0,
+      why:"Es una amenaza directa, actual e inminente contra la vida: arma de fuego, arma blanca, explosivos o agresión múltiple." },
+    { q:"¿Qué elemento distingue el riesgo 'Graves a Letales' de los demás niveles?", tab:'riesgo',
+      options:["Que la conducta es verbalmente agresiva","Que existe amenaza directa, actual e inminente contra la vida","Que el ciudadano no atiende órdenes","Que hay presencia de terceros"], correct:1,
+      why:"El nivel más alto de riesgo se define por la amenaza directa, actual e inminente contra la vida." },
+
+    /* --- Respuesta razonable --- */
+    { q:"La Fuerza Potencialmente Letal solo se puede usar cuando:", tab:'respuesta',
+      options:["El ciudadano se niega a colaborar","Existe amenaza inminente de muerte o lesiones graves y otros medios resultan ineficaces","Se necesita agilizar un procedimiento administrativo","Hay resistencia pasiva del ciudadano"], correct:1,
+      why:"Es la medida extrema: amenaza inminente de muerte o lesiones graves, evitar un delito grave con serio peligro para la vida, o impedir la fuga de quien represente amenaza seria para la vida." },
+    { q:"El primer nivel de la respuesta razonable corresponde a:", tab:'respuesta',
+      options:["Técnicas y tácticas comunicativas","Fuerza potencialmente letal","Técnicas y tácticas defensivas","Control de contacto y control físico"], correct:0,
+      why:"La respuesta razonable inicia con las técnicas y tácticas comunicativas, buscando el desescalamiento antes de pasar al contacto físico." },
+    { q:"El Control de Contacto y Control Físico permite:", tab:'respuesta',
+      options:["Generar un canal de comunicación asertivo","Controlar, reducir, inmovilizar, conducir o trasladar al presunto infractor","Aplicar fuerza potencialmente letal","Sustituir las armas menos letales"], correct:1,
+      why:"Son maniobras que permiten controlar, reducir, inmovilizar, conducir o trasladar al presunto infractor." },
+    { q:"Las Técnicas y Tácticas Defensivas se aplican mediante:", tab:'respuesta',
+      options:["Armas menos letales, generando seguridad para el intervenido, el uniformado y terceros","Disuasión únicamente verbal","Armas de fuego reglamentarias","Inmovilización sin comunicación previa"], correct:0,
+      why:"Son técnicas defensivas y disuasivas mediante armas menos letales, generando seguridad para el intervenido, el uniformado y terceros." },
+    { q:"Según la resolución, la fuerza potencialmente letal es una medida:", tab:'respuesta',
+      options:["De uso rutinario ante cualquier resistencia","Extrema, solo cuando otros medios resulten ineficaces","Preferente frente a la resistencia activa","Aplicable ante resistencia pasiva"], correct:1,
+      why:"Es una medida extrema y excepcional: solo procede cuando otros medios resulten ineficaces y sea estrictamente inevitable para proteger una vida." },
+    { q:"Se podrá desenfundar el arma cuando:", tab:'respuesta',
+      options:["Exista amenaza real, actual, inminente o percibida, por seguridad operacional","El ciudadano eleve la voz","Haya más de tres personas en el lugar","Se trate de un procedimiento administrativo"], correct:0,
+      why:"El documento permite desenfundar el arma ante amenaza real, actual, inminente o percibida, por seguridad operacional." },
+    { q:"¿Cuál de estas situaciones NO habilita el uso de fuerza potencialmente letal?", tab:'respuesta',
+      options:["Amenaza inminente de muerte o lesiones graves al uniformado o terceros","Evitar un delito grave que implique serio peligro para la vida","Impedir la fuga de quien represente amenaza seria para la vida","Que el ciudadano se niegue a mostrar sus documentos"], correct:3,
+      why:"Negarse a mostrar documentos no habilita la fuerza potencialmente letal; esta procede solo ante amenaza inminente de muerte o lesiones graves, delito grave con peligro para la vida o fuga de quien represente amenaza seria." },
+
+    /* --- Sistema de intervención --- */
+    { q:"Las Técnicas y Tácticas de Comunicación en el sistema de intervención comprenden:", tab:'sistema',
+      options:["Verbalización, contacto visual, quinesia, proxemia y paralingüística","Uso exclusivo de armas menos letales","Inmovilización física inmediata","Uso de arma de fuego"], correct:0,
+      why:"Son habilidades orales y no verbales —verbalización, contacto visual, quinesia, proxemia y paralingüística— para persuadir y disuadir sin contacto físico." },
+    { q:"El Sistema de Intervención Policial corresponde a:", tab:'sistema',
+      options:["Un listado de sanciones disciplinarias","Entrenamiento y reentrenamiento continuo del uniformado en cuatro niveles de capacitación","Un protocolo exclusivo para multitudes","La dotación de armamento por unidad"], correct:1,
+      why:"Es el entrenamiento y reentrenamiento continuo del uniformado, estructurado en cuatro niveles de capacitación." },
+    { q:"El nivel de Control, Reducción e Inmovilización se orienta a:", tab:'sistema',
+      options:["Persuadir sin contacto físico","Actuar profesional y racionalmente frente a resistencia activa o moderada, reduciendo riesgos","Aplicar fuerza letal de forma excepcional","Reemplazar la comunicación asertiva"], correct:1,
+      why:"Busca una actuación profesional y racional frente a resistencia activa o moderada, reduciendo riesgos para el uniformado y terceros." },
+    { q:"Las Tácticas Defensivas AML buscan:", tab:'sistema',
+      options:["Mitigar agresiones físicas mediante Armas Menos Letales","Sustituir las técnicas comunicativas","Aumentar la fuerza aplicada","Reemplazar el control físico"], correct:0,
+      why:"AML son las Armas Menos Letales, empleadas para mitigar agresiones físicas." },
+    { q:"El nivel de Técnicas y Tácticas con Armas de Fuego se enmarca en:", tab:'sistema',
+      options:["Uso ordinario según criterio del uniformado","Uso excepcional de la fuerza potencialmente letal bajo amenaza inminente y grave contra la vida, conforme al marco legal y los DD.HH.","Uso preventivo en multitudes","Uso para proteger bienes materiales"], correct:1,
+      why:"El arma de fuego se emplea de manera excepcional, bajo amenaza inminente y grave contra la vida, conforme al marco legal y los derechos humanos." },
+
+    /* --- Principios rectores --- */
+    { q:"El criterio Cualitativo del principio de Necesidad evalúa:", tab:'principios',
+      options:["La cantidad exacta de fuerza a utilizar","El momento para cesar la fuerza","Si es indispensable emplear la fuerza o existen vías alternas para evitarla","El tipo de arma reglamentaria"], correct:2,
+      why:"El criterio cualitativo valora si es indispensable emplear la fuerza o si existen vías alternas para evitarla." },
+    { q:"El criterio Cuantitativo del principio de Necesidad exige:", tab:'principios',
+      options:["Utilizar la máxima fuerza disponible","Utilizar la mínima cantidad de fuerza estrictamente indispensable para ser efectiva","Suspender el procedimiento de inmediato","Usar siempre armas menos letales"], correct:1,
+      why:"Exige la mínima cantidad de fuerza estrictamente indispensable; el criterio temporal ordena cesar al cumplirse el objetivo." },
+    { q:"El criterio Temporal del principio de Necesidad ordena:", tab:'principios',
+      options:["Planear el uso de la fuerza con anticipación","Cesar el uso de la fuerza de inmediato al cumplirse el objetivo o si ya no es factible alcanzarlo","Usar la fuerza solo de noche","Esperar refuerzos antes de actuar"], correct:1,
+      why:"El criterio temporal ordena cesar de inmediato el uso de la fuerza al cumplirse el objetivo o cuando ya no sea factible alcanzarlo." },
+    { q:"El principio de Necesidad establece el deber prioritario de:", tab:'principios',
+      options:["Acudir a mecanismos preventivos y disuasorios antes de recurrir a la fuerza o a las armas de fuego","Usar primero el arma de fuego","Priorizar la fuerza física sobre la comunicación","Actuar solo con orden judicial"], correct:0,
+      why:"Se debe acudir primero a mecanismos preventivos y disuasorios; la fuerza y las armas de fuego se autorizan solo cuando otras alternativas sean ineficaces." },
+    { q:"El principio de Proporcionalidad prohíbe expresamente:", tab:'principios',
+      options:["El uso de comunicación verbal","El uso de técnicas de control físico","Implementar medidas extremas para proteger bienes de valor inferior a la vida o integridad física","El entrenamiento continuo del uniformado"], correct:2,
+      why:"Se prohíbe usar medidas extremas para proteger bienes de valor inferior a la vida o la integridad física, eligiendo siempre la opción de menor daño." },
+    { q:"La Proporcionalidad implica:", tab:'principios',
+      options:["Correspondencia directa entre el nivel de fuerza y la conducta manifestada","Aplicar siempre la máxima fuerza disponible","Usar la fuerza sin evaluar el daño potencial","Iniciar todo procedimiento con la fuerza letal"], correct:0,
+      why:"Exige correspondencia directa entre el nivel de fuerza y la conducta manifestada, sopesando amenaza frente a daño potencial y eligiendo la opción de menor daño posible." },
+    { q:"El principio de Constitucionalidad y Legalidad exige que:", tab:'principios',
+      options:["El uniformado decida según su criterio personal","La actuación tenga finalidad legal, ajustada a la Constitución, leyes, reglamentos y estándares de DD.HH., usando solo medios oficiales","Se use cualquier medio disponible para lograr el objetivo","Se priorice el resultado sobre el procedimiento"], correct:1,
+      why:"Toda actuación debe dirigirse a una finalidad legal, ajustada a la Constitución, las leyes, los reglamentos y los estándares de derechos humanos, empleando solo medios oficiales reglamentados." },
+    { q:"El principio Diferenciado busca:", tab:'principios',
+      options:["Aplicar la misma respuesta a todas las personas","Focalizar la respuesta solo sobre los causantes de la perturbación, evitando el uso indiscriminado de la fuerza","Sancionar a todo el grupo presente","Evitar el uso de la comunicación"], correct:1,
+      why:"Identifica con precisión el nivel de resistencia para focalizar la respuesta en los causantes de la perturbación, evitando el uso indiscriminado de la fuerza." },
+    { q:"Según el principio Diferenciado, la intervención debe ser:", tab:'principios',
+      options:["Fija y predeterminada","Dinámica y gradual, capaz de escalar o desescalar según cambien las circunstancias","Exclusivamente defensiva","Exclusivamente comunicativa"], correct:1,
+      why:"La intervención debe ser dinámica y gradual: capaz de escalar o desescalar conforme cambien las circunstancias." },
+    { q:"¿Cuántos criterios se emplean para evaluar el principio de Necesidad?", tab:'principios',
+      options:["Tres: cualitativo, cuantitativo y temporal","Dos: legal y social","Cuatro: legal, social, temporal y económico","Uno: el criterio del comandante"], correct:0,
+      why:"El principio de necesidad se evalúa mediante tres criterios: cualitativo, cuantitativo y temporal." }
   ];
 
-  const quizForm = document.getElementById('quizForm');
-  quizData.forEach((item, idx)=>{
-    const qDiv = document.createElement('div');
-    qDiv.className = 'quiz-question';
-    qDiv.style.animationDelay = (idx*0.05)+'s';
-    let optionsHTML = '';
-    item.options.forEach((opt,i)=>{
-      optionsHTML += `
-        <label class="quiz-option" data-q="${idx}" data-i="${i}">
-          <input type="radio" name="q${idx}" value="${i}">
-          <span>${opt}</span>
-        </label>`;
-    });
-    qDiv.innerHTML = `<h4>${item.q}</h4><div class="quiz-options">${optionsHTML}</div>`;
-    quizForm.appendChild(qDiv);
+  /* ---------- estado del quiz ---------- */
+  var quizRun = [];          // preguntas de este intento (con opciones ya ordenadas)
+  var quizAnswers = [];      // índice elegido o null
+  var quizStart = 0, quizTimerId = null, quizCalificado = false;
+  var quizForm = document.getElementById('quizForm');
+  var shuffleChk = document.getElementById('shuffleChk');
+
+  try{ shuffleChk.checked = store.get(LS_SHUFFLE) !== 'false'; }catch(e){}
+  shuffleChk.addEventListener('change', function(){
+    store.set(LS_SHUFFLE, shuffleChk.checked ? 'true' : 'false');
+    if(!quizCalificado && quizRun.length){
+      prepararIntento();
+      renderQuiz();
+      showToast(shuffleChk.checked ? '🔀 Preguntas aleatorizadas.' : '↕ Orden original restaurado.');
+    }
   });
 
-  document.getElementById('submitQuiz').addEventListener('click', ()=>{
-    let score = 0, unanswered = 0;
+  function prepararIntento(){
+    var indices = bancoPreguntas.map(function(_, i){ return i; });
+    if(shuffleChk.checked){
+      mezclar(indices);
+    }else{
+      indices.sort(function(a,b){ return a - b; });
+    }
+    var seleccion = indices.slice(0, Math.min(PREGUNTAS_POR_INTENTO, bancoPreguntas.length));
 
-    quizData.forEach((item, idx)=>{
-      const selected = quizForm.querySelector(`input[name="q${idx}"]:checked`);
-      const optionLabels = quizForm.querySelectorAll(`label[data-q="${idx}"]`);
-      if(!selected){ unanswered++; }
-      optionLabels.forEach(label=>{
-        const i = parseInt(label.dataset.i);
-        label.classList.remove('correct','incorrect');
-        if(i === item.correct){ label.classList.add('correct'); }
-        else if(selected && parseInt(selected.value) === i){ label.classList.add('incorrect'); }
+    quizRun = seleccion.map(function(i){
+      var item = bancoPreguntas[i];
+      return {
+        q: item.q,
+        why: item.why,
+        tab: item.tab,
+        options: item.options.map(function(txt, j){ return { txt: txt, ok: j === item.correct }; })
+      };
+    });
+    if(shuffleChk.checked){
+      quizRun.forEach(function(it){ mezclar(it.options); });
+    }
+    quizAnswers = new Array(quizRun.length).fill(null);
+    quizCalificado = false;
+    var totalSpan = document.getElementById('answeredTotal');
+    if(totalSpan) totalSpan.textContent = quizRun.length;
+  }
+
+  function renderQuiz(){
+    quizForm.innerHTML = '';
+    quizRun.forEach(function(item, idx){
+      var div = document.createElement('div');
+      div.className = 'quiz-question';
+      div.dataset.q = idx;
+      div.style.animationDelay = (idx * 0.04) + 's';
+      var html = '<div class="q-meta"><span>PREGUNTA ' + (idx + 1) + ' DE ' + quizRun.length + '</span>' +
+                 '<span>' + (tabNames[item.tab] || '') + '</span></div>' +
+                 '<h4>' + escapar(item.q) + '</h4><div class="quiz-options" role="radiogroup" aria-label="Opciones de la pregunta ' + (idx+1) + '">';
+      item.options.forEach(function(opt, i){
+        html += '<label class="quiz-option" data-q="' + idx + '" data-i="' + i + '">' +
+                  '<input type="radio" name="q' + idx + '" value="' + i + '">' +
+                  '<span>' + escapar(opt.txt) + '</span>' +
+                '</label>';
       });
-      if(selected && parseInt(selected.value) === item.correct){ score++; }
+      html += '</div><div class="q-explain" id="explain-' + idx + '"></div>';
+      div.innerHTML = html;
+      quizForm.appendChild(div);
+    });
+    actualizarContadorRespuestas();
+    detenerCronometro();
+    document.getElementById('quizTimer').textContent = '00:00';
+  }
+
+  /* el cronómetro arranca cuando el aspirante abre la evaluación o responde algo */
+  function asegurarCronometro(){
+    if(quizCalificado || quizTimerId) return;
+    iniciarCronometro();
+  }
+
+  quizForm.addEventListener('change', function(e){
+    var input = e.target;
+    if(!input || input.type !== 'radio' || quizCalificado) return;
+    var idx = parseInt(input.name.replace('q',''), 10);
+    quizAnswers[idx] = parseInt(input.value, 10);
+    var cont = quizForm.querySelector('.quiz-question[data-q="' + idx + '"]');
+    if(cont) cont.classList.remove('pending');
+    asegurarCronometro();
+    actualizarContadorRespuestas();
+  });
+
+  function actualizarContadorRespuestas(){
+    var respondidas = quizAnswers.filter(function(a){ return a !== null; }).length;
+    document.getElementById('answeredCount').textContent = respondidas;
+    document.getElementById('liveProgressFill').style.width = (respondidas / quizRun.length * 100) + '%';
+  }
+
+  function iniciarCronometro(){
+    detenerCronometro();
+    quizStart = Date.now();
+    document.getElementById('quizTimer').textContent = '00:00';
+    quizTimerId = setInterval(function(){
+      if(quizCalificado) return;
+      document.getElementById('quizTimer').textContent = formatoTiempo((Date.now() - quizStart) / 1000);
+    }, 1000);
+  }
+  function detenerCronometro(){ if(quizTimerId){ clearInterval(quizTimerId); quizTimerId = null; } }
+
+  function actualizarEstadisticasIntento(){
+    var intentos = parseInt(store.get(LS_QUIZ_ATTEMPTS) || '0', 10) || 0;
+    var mejor = store.get(LS_QUIZ_BEST);
+    var total = parseInt(store.get(LS_QUIZ_TOTAL) || '0', 10) || PREGUNTAS_POR_INTENTO;
+    document.getElementById('attemptStat').innerHTML =
+      'INTENTOS: <b>' + intentos + '</b> · MEJOR: <b>' + (mejor !== null ? mejor + '/' + total : '—') + '</b>';
+  }
+
+  document.getElementById('clearQuizBtn').addEventListener('click', function(){
+    if(quizCalificado){ showToast('ℹ La evaluación ya fue calificada. Usa REINTENTAR.'); return; }
+    abrirConfirm({
+      icon:'🧹', title:'¿Borrar las respuestas?', text:'Se limpiarán tus respuestas de este intento (las preguntas no cambian).',
+      okLabel:'Sí, borrar', cyan:true,
+      onOk:function(){
+        prepararIntento(); renderQuiz();
+        showToast('🧹 Respuestas borradas.');
+      }
+    });
+  });
+
+  /* ---------- calificar ---------- */
+  document.getElementById('submitQuiz').addEventListener('click', function(){
+    if(quizCalificado){ showToast('ℹ Ya calificaste. Presiona REINTENTAR EVALUACIÓN para volver a intentarlo.'); return; }
+    var faltan = [];
+    quizAnswers.forEach(function(a, i){ if(a === null) faltan.push(i + 1); });
+    if(faltan.length){
+      faltan.forEach(function(n){
+        var el = quizForm.querySelector('.quiz-question[data-q="' + (n-1) + '"]');
+        if(el) el.classList.add('pending');
+      });
+      abrirConfirm({
+        icon:'📝', title:'Preguntas sin responder',
+        text:'Tienes ' + faltan.length + ' pregunta(s) sin responder: ' + faltan.join(', ') + '. Si calificas ahora se contarán como incorrectas.',
+        okLabel:'Calificar igual', cyan:false,
+        onOk:function(){ calificar(); }
+      });
+      var primero = quizForm.querySelector('.quiz-question.pending');
+      if(primero) primero.scrollIntoView({behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth', block:'center'});
+      return;
+    }
+    calificar();
+  });
+
+  function calificar(){
+    detenerCronometro();
+    quizCalificado = true;
+    var btnSubmit = document.getElementById('submitQuiz');
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'EVALUACIÓN CALIFICADA';
+    var segundos = Math.max(1, Math.round((Date.now() - quizStart) / 1000));
+    var score = 0;
+    var falladas = [];
+
+    quizRun.forEach(function(item, idx){
+      var elegido = quizAnswers[idx];
+      var labels = quizForm.querySelectorAll('label[data-q="' + idx + '"]');
+      labels.forEach(function(label){
+        var i = parseInt(label.getAttribute('data-i'), 10);
+        var radio = label.querySelector('input');
+        if(radio) radio.disabled = true;
+        label.classList.remove('correct','incorrect','dim');
+        if(item.options[i].ok){ label.classList.add('correct'); }
+        else if(elegido === i){ label.classList.add('incorrect'); }
+        else { label.classList.add('dim'); }
+      });
+      var acerto = (elegido !== null && item.options[elegido].ok);
+      if(acerto) score++;
+      else{
+        falladas.push({
+          idx: idx + 1,
+          q: item.q,
+          why: item.why,
+          tab: item.tab,
+          elegida: (elegido === null ? null : item.options[elegido].txt),
+          correcta: item.options.filter(function(o){ return o.ok; })[0].txt
+        });
+        var exp = document.getElementById('explain-' + idx);
+        if(exp){
+          exp.classList.add('show');
+          exp.innerHTML = '<b>RETROALIMENTACIÓN</b>' + escapar(item.why);
+        }
+      }
+      var cont = quizForm.querySelector('.quiz-question[data-q="' + idx + '"]');
+      if(cont) cont.classList.remove('pending');
     });
 
-    const percentage = Math.round((score/quizData.length)*100);
-    const passed = percentage >= 70;
-    const nowISO = new Date().toISOString();
+    var total = quizRun.length;
+    var percentage = Math.round((score / total) * 100);
+    var passed = percentage >= 70;
 
-    localStorage.setItem(LS_QUIZ_PASSED, passed ? 'true':'false');
-    localStorage.setItem(LS_QUIZ_SCORE, score);
-    localStorage.setItem(LS_QUIZ_TOTAL, quizData.length);
-    localStorage.setItem(LS_QUIZ_PERCENT, percentage);
-    localStorage.setItem(LS_QUIZ_DATE, nowISO);
+    /* guardar historial */
+    var intentos = (parseInt(store.get(LS_QUIZ_ATTEMPTS) || '0', 10) || 0) + 1;
+    store.set(LS_QUIZ_ATTEMPTS, intentos);
+    var mejorPrev = store.get(LS_QUIZ_BEST);
+    var mejor = (mejorPrev === null) ? score : Math.max(parseInt(mejorPrev, 10) || 0, score);
+    store.set(LS_QUIZ_BEST, mejor);
+    store.set(LS_QUIZ_TIME, segundos);
+    store.set(LS_QUIZ_PASSED, passed ? 'true' : 'false');
+    store.set(LS_QUIZ_SCORE, score);
+    store.set(LS_QUIZ_TOTAL, total);
+    store.set(LS_QUIZ_PERCENT, percentage);
+    store.set(LS_QUIZ_DATE, new Date().toISOString());
+    if(!store.ok) document.getElementById('storageNote').classList.add('show');
 
-    let msg = '';
+    /* el mejor intento aprobado se conserva aunque después se falle un repaso */
+    if(passed){
+      var mejorAprobado = leerBestPass();
+      if(!mejorAprobado || percentage >= (mejorAprobado.porcentaje || 0)){
+        var nombreAprobado = (document.getElementById('evalName') ? String(document.getElementById('evalName').value || '').trim() : '')
+                             || store.get(LS_CERT_NAME) || 'Sin nombre';
+        guardarBestPass({
+          nombre: nombreAprobado, score: score, total: total, porcentaje: percentage,
+          aprobado: true, segundos: segundos, intento: intentos,
+          fechaISO: new Date().toISOString()
+        });
+      }
+    }
+
+    /* nombre del evaluado + registro histórico */
+    var campoNombre = document.getElementById('evalName');
+    var nombreEval = campoNombre ? String(campoNombre.value || '').trim() : '';
+    if(nombreEval) store.set(LS_CERT_NAME, nombreEval);
+    var nombreRegistro = nombreEval || store.get(LS_CERT_NAME) || 'Sin nombre';
+    store.set(LS_EVAL_NAME, nombreRegistro);
+    var historial = leerHistorial();
+    historial.push({
+      fechaISO: new Date().toISOString(),
+      fechaTexto: new Date().toLocaleString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}),
+      nombre: nombreRegistro,
+      score: score,
+      total: total,
+      porcentaje: percentage,
+      aprobado: passed,
+      segundos: segundos,
+      intento: intentos
+    });
+    guardarHistorial(historial);
+    renderRegistro();
+    renderPrevPassBanner();   /* refresca el banner de aprobación con el mejor resultado */
+
+    var msg = '';
     if(percentage >= 90) msg = 'Excelente dominio del modelo de uso de la fuerza.';
     else if(percentage >= 70) msg = 'Buen conocimiento, ¡evaluación aprobada!';
     else if(percentage >= 50) msg = 'Conocimiento moderado, se recomienda repasar la resolución.';
     else msg = 'Es necesario repasar nuevamente todos los temas de la resolución.';
 
-    const resultDiv = document.getElementById('quizResult');
+    /* revisión de falladas */
+    var revisionHTML = '';
+    if(falladas.length){
+      var temasFallados = [];
+      falladas.forEach(function(f){ if(temasFallados.indexOf(f.tab) === -1) temasFallados.push(f.tab); });
+      revisionHTML = '<div class="review-block"><h5>🔎 REPASO DE PREGUNTAS FALLADAS (' + falladas.length + ')</h5>';
+      falladas.forEach(function(f){
+        revisionHTML += '<div class="review-item">' +
+          '<div class="ri-q">' + f.idx + '. ' + escapar(f.q) + '</div>' +
+          '<div class="ri-b">Tu respuesta: ' + (f.elegida ? escapar(f.elegida) : '<i>sin responder</i>') + '</div>' +
+          '<div class="ri-a">✔ Correcta: ' + escapar(f.correcta) + '</div>' +
+          '<div class="ri-b" style="color:var(--purple);">💡 ' + escapar(f.why) + '</div>' +
+        '</div>';
+      });
+      revisionHTML += '<div class="review-tags">';
+      temasFallados.forEach(function(t){
+        revisionHTML += '<span class="review-tag" data-goto="' + t + '" role="button" tabindex="0">📖 Repasar: ' + escapar(tabNames[t]) + '</span>';
+      });
+      revisionHTML += '</div></div>';
+    }
+
+    var certificadoHTML = '';
+    if(passed){
+      certificadoHTML =
+        '<div class="certificate-section">' +
+          '<h4>🏆 ¡Felicidades! Has aprobado la evaluación</h4>' +
+          '<p>Escribe tu nombre completo tal como debe aparecer en el certificado (soldado, grado o nombre).</p>' +
+          '<input type="text" id="certName" class="name-input" placeholder="Nombre completo" maxlength="60" value="' + escapar(store.get(LS_CERT_NAME) || '') + '">' +
+          '<div class="cert-actions">' +
+            '<button class="btn-neon btn-certificate" id="previewCertBtn" type="button">📜 VER CERTIFICADO</button>' +
+            '<button class="btn-neon btn-share" id="shareCertBtn" type="button">📤 COMPARTIR</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    var resultDiv = document.getElementById('quizResult');
     resultDiv.style.display = 'block';
+    resultDiv.innerHTML =
+      '<h3 style="font-family:var(--font-display);color:var(--cyan);">RESULTADO FINAL</h3>' +
+      '<div class="score">' + score + ' / ' + total + '</div>' +
+      '<div class="result-stats">' +
+        '<div>ACIERTOS<b>' + percentage + '%</b></div>' +
+        '<div>TIEMPO<b>' + formatoTiempo(segundos) + '</b></div>' +
+        '<div>INTENTOS<b>' + intentos + '</b></div>' +
+        '<div>MEJOR<b>' + mejor + '/' + total + '</b></div>' +
+        '<div>APROBADO<b style="color:' + (passed ? 'var(--green)' : 'var(--red)') + '">' + (passed ? 'SÍ (≥70%)' : 'NO') + '</b></div>' +
+      '</div>' +
+      '<p><strong>' + percentage + '% de aciertos.</strong> ' + msg + '</p>' +
+      (falladas.length ? '' : '<p style="color:var(--green);margin-top:10px;">¡Respondiste todo correctamente! 🎯</p>') +
+      revisionHTML +
+      certificadoHTML +
+      '<div style="margin-top:24px;">' +
+        '<button class="btn-neon" id="retryBtn" type="button">REINTENTAR EVALUACIÓN</button>' +
+      '</div>';
 
-    let certificateHTML = '';
+    /* acciones del resultado */
+    var retry = document.getElementById('retryBtn');
+    if(retry) retry.addEventListener('click', function(){
+      resultDiv.style.display = 'none';
+      prepararIntento();
+      renderQuiz();
+      actualizarEstadisticasIntento();
+      var btn = document.getElementById('submitQuiz');
+      btn.disabled = false;
+      btn.textContent = 'CALIFICAR EVALUACIÓN';
+      iniciarCronometro();
+      document.getElementById('quiz').scrollIntoView({behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth', block:'start'});
+      showToast('🔄 Nuevo intento. ¡Éxito!');
+    });
+
+    resultDiv.querySelectorAll('[data-goto]').forEach(function(tag){
+      var ir = function(){ activarTab(tag.getAttribute('data-goto')); };
+      tag.addEventListener('click', ir);
+      tag.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ir(); } });
+    });
+
     if(passed){
-      const savedName = localStorage.getItem(LS_CERT_NAME) || '';
-      certificateHTML = `
-        <div class="certificate-section">
-          <h4>🏆 ¡Felicidades! Has aprobado la evaluación</h4>
-          <p>Ingresa tu nombre completo para generar tu certificado oficial.</p>
-          <input type="text" id="certName" class="name-input" placeholder="Nombre completo" maxlength="60" value="${savedName}">
-          <div class="cert-actions">
-            <button class="btn-neon btn-certificate" id="downloadCertBtn">📜 DESCARGAR</button>
-            <button class="btn-neon btn-share" id="shareCertBtn">📤 COMPARTIR</button>
-          </div>
-        </div>
-      `;
+      var input = document.getElementById('certName');
+      document.getElementById('previewCertBtn').addEventListener('click', function(){ validarYCertificar(input.value, score, total, percentage, segundos, intentos, 'preview'); });
+      document.getElementById('shareCertBtn').addEventListener('click', function(){ validarYCertificar(input.value, score, total, percentage, segundos, intentos, 'share'); });
     }
 
-    resultDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif;color:var(--cyan);">RESULTADO FINAL</h3>
-      <div class="score">${score} / ${quizData.length}</div>
-      <p><strong>${percentage}% de aciertos.</strong> ${msg}</p>
-      ${unanswered>0 ? `<p style="color:var(--red);margin-top:10px;">Preguntas sin responder: ${unanswered}</p>` : ''}
-      ${certificateHTML}
-      <div style="margin-top:24px;">
-        <button class="btn-neon" onclick="location.reload()">REINTENTAR EVALUACIÓN</button>
-      </div>
-    `;
-
-    if(passed){
-      document.getElementById('downloadCertBtn').addEventListener('click', ()=>{
-        const nameInput = document.getElementById('certName').value.trim();
-        if(!nameInput){ alert('Por favor ingresa tu nombre completo.'); return; }
-        localStorage.setItem(LS_CERT_NAME, nameInput);
-        generateCertificateBlob(nameInput, score, quizData.length, percentage, 'download');
-      });
-      document.getElementById('shareCertBtn').addEventListener('click', ()=>{
-        const nameInput = document.getElementById('certName').value.trim();
-        if(!nameInput){ alert('Por favor ingresa tu nombre completo.'); return; }
-        localStorage.setItem(LS_CERT_NAME, nameInput);
-        generateCertificateBlob(nameInput, score, quizData.length, percentage, 'share');
-      });
-    }
-
-    resultDiv.scrollIntoView({behavior:'smooth', block:'center'});
-  });
-
-  /* =========================================================
-     GENERADOR DE CERTIFICADO (CANVAS)
-  ========================================================= */
-  function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-    const words = text.split(' ');
-    let line = '', lines = [];
-    for(let n=0;n<words.length;n++){
-      const testLine = line + words[n] + ' ';
-      const metrics = ctx.measureText(testLine);
-      if(metrics.width > maxWidth && n>0){ lines.push(line); line = words[n]+' '; }
-      else{ line = testLine; }
-    }
-    lines.push(line);
-    lines.forEach((l,i)=> ctx.fillText(l.trim(), x, y + i*lineHeight));
+    actualizarEstadisticasIntento();
+    resultDiv.scrollIntoView({behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth', block:'center'});
+    showToast(passed ? '🏆 Evaluación aprobada con ' + percentage + '%' : '📚 Aún no apruebas. Revisa el repaso y vuelve a intentarlo.');
   }
 
-  function paintCertificate(ctx, W, H, name, score, total, percentage){
+  function validarYCertificar(nombre, score, total, percentage, segundos, intentos, modo){
+    var limpio = String(nombre || '').trim();
+    if(limpio.length < 3){
+      showToast('✏️ Escribe tu nombre completo para generar el certificado.');
+      var inp = document.getElementById('certName');
+      if(inp){ inp.focus(); inp.scrollIntoView({behavior:'smooth', block:'center'}); }
+      return;
+    }
+    store.set(LS_CERT_NAME, limpio);
+    generarCertificado(limpio, score, total, percentage, segundos, intentos, modo);
+  }
+
+  /* =========================================================
+     REGISTRO DE EVALUACIONES (para instructores)
+  ========================================================= */
+  function leerBestPass(){
+    try{
+      var b = JSON.parse(store.get(LS_BEST_PASS) || 'null');
+      if(b && typeof b === 'object' && b.aprobado) return b;
+      return null;
+    }catch(e){ return null; }
+  }
+  function guardarBestPass(obj){
+    store.set(LS_BEST_PASS, JSON.stringify(obj));
+  }
+
+  function leerHistorial(){
+    try{
+      var h = JSON.parse(store.get(LS_HISTORIAL) || '[]');
+      return Array.isArray(h) ? h : [];
+    }catch(e){ return []; }
+  }
+  function guardarHistorial(lista){
+    store.set(LS_HISTORIAL, JSON.stringify(lista.slice(-300)));
+  }
+
+  function renderRegistro(){
+    var cont = document.getElementById('registroTableWrap');
+    var stats = document.getElementById('registroStats');
+    if(!cont || !stats) return;
+    var hist = leerHistorial();
+
+    if(!hist.length){
+      stats.innerHTML = '';
+      cont.innerHTML = '<p class="registro-empty">Aún no hay evaluaciones registradas en este equipo.<br>Al calificar la evaluación, el resultado quedará aquí con el nombre del evaluado.</p>';
+      return;
+    }
+
+    var aprobados = hist.filter(function(h){ return h.aprobado; }).length;
+    var promedio = Math.round(hist.reduce(function(a,h){ return a + (h.porcentaje || 0); }, 0) / hist.length);
+    var mejor = hist.slice().sort(function(a,b){ return (b.porcentaje || 0) - (a.porcentaje || 0); })[0];
+
+    stats.innerHTML =
+      '<div class="reg-chip">EVALUACIONES<b>' + hist.length + '</b></div>' +
+      '<div class="reg-chip">APROBADOS<b>' + aprobados + '</b></div>' +
+      '<div class="reg-chip">PROMEDIO<b>' + promedio + '%</b></div>' +
+      '<div class="reg-chip">MEJOR RESULTADO<b>' + escapar(mejor.nombre || '—') + ' · ' + (mejor.porcentaje || 0) + '%</b></div>';
+
+    var filas = hist.slice().reverse().map(function(h){
+      return '<tr>' +
+        '<td>' + escapar(h.fechaTexto || '') + '</td>' +
+        '<td>' + escapar(h.nombre || 'Sin nombre') + '</td>' +
+        '<td class="num">' + h.score + '/' + h.total + '</td>' +
+        '<td class="num">' + h.porcentaje + '%</td>' +
+        '<td class="num">' + formatoTiempo(h.segundos || 0) + '</td>' +
+        '<td>' + (h.aprobado ? '<span class="reg-ok">APROBADO</span>' : '<span class="reg-no">NO APROBADO</span>') + '</td>' +
+      '</tr>';
+    }).join('');
+
+    cont.innerHTML =
+      '<table class="registro-table">' +
+        '<thead><tr><th>Fecha y hora</th><th>Evaluado</th><th>Aciertos</th><th>%</th><th>Tiempo</th><th>Estado</th></tr></thead>' +
+        '<tbody>' + filas + '</tbody>' +
+      '</table>';
+  }
+
+  function imprimirHtml(html, titulo){
+    try{
+      var viejo = document.getElementById('marcoImpresion');
+      if(viejo) viejo.remove();
+      var marco = document.createElement('iframe');
+      marco.id = 'marcoImpresion';
+      marco.style.position = 'fixed';
+      marco.style.right = '0'; marco.style.bottom = '0';
+      marco.style.width = '0'; marco.style.height = '0';
+      marco.style.border = '0';
+      document.body.appendChild(marco);
+      var doc = marco.contentWindow.document;
+      doc.open();
+      doc.write('<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>' + titulo + '</title>' +
+        '<style>body{font-family:Arial,Helvetica,sans-serif;padding:26px;color:#111}' +
+        'h1{font-size:19px;margin-bottom:4px}h2{font-size:14px;font-weight:normal;color:#444;margin-bottom:18px}' +
+        'table{width:100%;border-collapse:collapse;font-size:12px}' +
+        'th,td{border:1px solid #999;padding:6px 8px;text-align:left}th{background:#eee}' +
+        '.pie{margin-top:18px;font-size:11px;color:#555}</style></head><body>' + html + '</body></html>');
+      doc.close();
+      setTimeout(function(){
+        try{ marco.contentWindow.focus(); marco.contentWindow.print(); }
+        catch(e){ showToast('⚠ La impresión está bloqueada aquí. Exporta el CSV.'); }
+      }, 400);
+      setTimeout(function(){ marco.remove(); }, 60000);
+    }catch(e){
+      showToast('⚠ La impresión no está disponible aquí. Usa la exportación a CSV.');
+    }
+  }
+
+  function exportarRegistroCSV(){
+    var hist = leerHistorial();
+    if(!hist.length){ showToast('ℹ No hay evaluaciones registradas para exportar.'); return; }
+    function celda(v){ return '"' + String(v === undefined || v === null ? '' : v).replace(/"/g, '""') + '"'; }
+    var lineas = ['Fecha y hora;Evaluado;Aciertos;Total;Porcentaje;Estado;Tiempo (s);Intento'];
+    hist.forEach(function(h){
+      lineas.push([
+        celda(h.fechaTexto), celda(h.nombre), celda(h.score), celda(h.total),
+        celda(h.porcentaje + '%'), celda(h.aprobado ? 'APROBADO' : 'NO APROBADO'),
+        celda(h.segundos || 0), celda(h.intento || 1)
+      ].join(';'));
+    });
+    var contenido = '\uFEFF' + lineas.join('\r\n');
+    var blob = new Blob([contenido], {type:'text/csv;charset=utf-8'});
+    var nombre = 'Registro_evaluaciones_04240_' + new Date().toISOString().slice(0,10) + '.csv';
+    if(downloadBlob(blob, nombre)) showToast('⬇ Registro exportado (' + hist.length + ' evaluaciones). Ábrelo en Excel.');
+    else showToast('⚠ No se pudo exportar aquí. Abre el archivo desde tu navegador.');
+  }
+
+  function imprimirRegistro(){
+    var hist = leerHistorial();
+    if(!hist.length){ showToast('ℹ No hay evaluaciones registradas para imprimir.'); return; }
+    var aprobados = hist.filter(function(h){ return h.aprobado; }).length;
+    var filas = hist.slice().reverse().map(function(h){
+      return '<tr><td>' + escapar(h.fechaTexto) + '</td><td>' + escapar(h.nombre) + '</td>' +
+             '<td>' + h.score + '/' + h.total + '</td><td>' + h.porcentaje + '%</td>' +
+             '<td>' + formatoTiempo(h.segundos || 0) + '</td>' +
+             '<td>' + (h.aprobado ? 'APROBADO' : 'NO APROBADO') + '</td></tr>';
+    }).join('');
+    imprimirHtml(
+      '<h1>Registro de evaluaciones · Resolución 04240</h1>' +
+      '<h2>Modelo para el Uso Diferenciado y Proporcional de la Fuerza · CENOP</h2>' +
+      '<table><thead><tr><th>Fecha y hora</th><th>Evaluado</th><th>Aciertos</th><th>%</th><th>Tiempo</th><th>Estado</th></tr></thead>' +
+      '<tbody>' + filas + '</tbody></table>' +
+      '<p class="pie">Total de evaluaciones: ' + hist.length + ' · Aprobados: ' + aprobados + ' · Expedido: ' + fechaLarga() + '</p>',
+      'Registro de evaluaciones 04240'
+    );
+    showToast('🖨 Abriendo la ventana de impresión...');
+  }
+
+  document.getElementById('exportCsvBtn').addEventListener('click', exportarRegistroCSV);
+  document.getElementById('printRegistroBtn').addEventListener('click', imprimirRegistro);
+  document.getElementById('clearRegistroBtn').addEventListener('click', function(){
+    var hist = leerHistorial();
+    if(!hist.length){ showToast('ℹ El registro ya está vacío.'); return; }
+    abrirConfirm({
+      icon:'🗑', title:'¿Borrar el registro?',
+      text:'Se eliminarán las ' + hist.length + ' evaluaciones registradas en este equipo. Tu progreso de lectura y el certificado no se afectan.',
+      okLabel:'Sí, borrar registro',
+      onOk:function(){
+        store.del(LS_HISTORIAL);
+        renderRegistro();
+        showToast('🗑 Registro borrado.');
+      }
+    });
+  });
+
+  /* ---------- banner de aprobación previa ---------- */
+  function renderPrevPassBanner(){
+    var banner = document.getElementById('prevPassBanner');
+    if(!banner) return;
+
+    var bestPass = leerBestPass();
+    if(!bestPass && store.get(LS_QUIZ_PASSED) === 'true'){
+      /* compatibilidad con datos guardados por versiones anteriores */
+      bestPass = {
+        nombre: store.get(LS_CERT_NAME) || '',
+        score: store.get(LS_QUIZ_SCORE), total: store.get(LS_QUIZ_TOTAL),
+        porcentaje: store.get(LS_QUIZ_PERCENT), aprobado: true,
+        segundos: parseInt(store.get(LS_QUIZ_TIME) || '0', 10) || 0,
+        intento: parseInt(store.get(LS_QUIZ_ATTEMPTS) || '0', 10) || 0,
+        fechaISO: store.get(LS_QUIZ_DATE)
+      };
+    }
+    if(!bestPass){ banner.innerHTML = ''; return; }
+
+    var score = bestPass.score;
+    var total = bestPass.total;
+    var percentage = bestPass.porcentaje;
+    var fechaISO = bestPass.fechaISO;
+    var fecha = fechaISO ? new Date(fechaISO).toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'}) : '—';
+    var nombre = bestPass.nombre || store.get(LS_CERT_NAME) || '';
+    var segundos = bestPass.segundos || 0;
+    var intentos = bestPass.intento || 0;
+
+    banner.innerHTML =
+      '<div class="prev-pass-banner">' +
+        '<h4>🏆 Ya aprobaste esta evaluación</h4>' +
+        '<p>Tu mejor resultado aprobado: ' + score + '/' + total + ' (' + percentage + '%) el ' + fecha + ' · tiempo ' + formatoTiempo(segundos) + ' · intento ' + intentos + '.</p>' +
+        '<input type="text" class="name-input" id="bannerName" placeholder="Nombre completo para el certificado" maxlength="60" value="' + escapar(nombre) + '">' +
+        '<div class="banner-actions">' +
+          '<button class="btn-ghost" id="bannerPreviewBtn" type="button">📜 Ver certificado</button>' +
+          '<button class="btn-ghost" id="bannerShareBtn" type="button">📤 Compartir</button>' +
+        '</div>' +
+      '</div>';
+
+    var input = document.getElementById('bannerName');
+    document.getElementById('bannerPreviewBtn').addEventListener('click', function(){
+      validarYCertificar(input.value, score, total, percentage, segundos, intentos, 'preview');
+    });
+    document.getElementById('bannerShareBtn').addEventListener('click', function(){
+      validarYCertificar(input.value, score, total, percentage, segundos, intentos, 'share');
+    });
+  }
+
+  /* =========================================================
+     CERTIFICADO
+  ========================================================= */
+  var certModal = document.getElementById('certModal');
+  var certBlobActual = null, certNombreActual = '', certModoActual = 'preview';
+
+  function cerrarCert(){ certModal.classList.remove('show'); }
+  document.getElementById('certClose').addEventListener('click', cerrarCert);
+  certModal.addEventListener('click', function(e){ if(e.target === certModal) cerrarCert(); });
+
+  function prefiereMenosMovimiento(){
+    try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; }
+  }
+
+  function esperarFuentes(){
+    if(!document.fonts || !document.fonts.load) return Promise.resolve();
+    var specs = ['900 50px Orbitron','700 44px Orbitron','600 22px Orbitron','500 24px Rajdhani',
+                 'italic 19px Rajdhani','600 16px Orbitron','500 18px Rajdhani','900 42px Orbitron','600 20px Rajdhani'];
+    var cargas = specs.map(function(s){
+      try{ return document.fonts.load(s, 'ABCabc0123') }catch(e){ return Promise.resolve(); }
+    });
+    return Promise.race([
+      Promise.all(cargas),
+      new Promise(function(r){ setTimeout(r, 2500); })
+    ]).catch(function(){});
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+    var words = String(text).split(' ');
+    var line = '', lines = [];
+    for(var n = 0; n < words.length; n++){
+      var testLine = line + words[n] + ' ';
+      if(ctx.measureText(testLine).width > maxWidth && n > 0){
+        lines.push(line); line = words[n] + ' ';
+      }else{
+        line = testLine;
+      }
+    }
+    lines.push(line);
+    lines.forEach(function(l,i){ ctx.fillText(l.trim(), x, y + i * lineHeight); });
+  }
+
+  /* reduce el tamaño de la letra hasta que el nombre quepa */
+  function ajustarTexto(ctx, texto, maxWidth, peso, tamanoInicial, familia){
+    var tamano = tamanoInicial;
+    do{
+      ctx.font = peso + ' ' + tamano + 'px ' + familia;
+      if(ctx.measureText(texto).width <= maxWidth) break;
+      tamano -= 2;
+    }while(tamano > 16);
+    return tamano;
+  }
+
+  function codigoVerificacion(nombre){
+    var base = (nombre + '|' + new Date().toISOString().slice(0,10)).split('').reduce(function(a,c){
+      return (a * 31 + c.charCodeAt(0)) % 999983;
+    }, 7);
+    var d = new Date();
+    return 'CENOP-04240-' + d.getFullYear() + '-' + String(base).padStart(5,'0');
+  }
+
+  function paintCertificate(ctx, W, H, datos){
     ctx.clearRect(0,0,W,H);
-    const bgGrad = ctx.createLinearGradient(0,0,W,H);
+    var bgGrad = ctx.createLinearGradient(0,0,W,H);
     bgGrad.addColorStop(0,'#080915'); bgGrad.addColorStop(0.5,'#0c1024'); bgGrad.addColorStop(1,'#0f1830');
     ctx.fillStyle = bgGrad; ctx.fillRect(0,0,W,H);
 
     ctx.strokeStyle = 'rgba(95,242,242,0.05)'; ctx.lineWidth = 1;
-    for(let x=0;x<W;x+=50){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-    for(let y=0;y<H;y+=50){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    for(var x=0;x<W;x+=50){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(var y=0;y<H;y+=50){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
     ctx.save();
     ctx.shadowColor = 'rgba(95,242,242,0.6)'; ctx.shadowBlur = 30;
@@ -898,117 +2015,307 @@
     ctx.strokeRect(60,60,W-120,H-120);
     ctx.restore();
 
-    [[70,70],[W-70,70],[70,H-70],[W-70,H-70]].forEach(([cx,cy])=>{
+    [[70,70],[W-70,70],[70,H-70],[W-70,H-70]].forEach(function(p){
       ctx.save();
       ctx.shadowColor='#f26ce0'; ctx.shadowBlur=20; ctx.fillStyle='#f26ce0';
-      ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
       ctx.restore();
     });
 
     ctx.textAlign='center';
     ctx.fillStyle='rgba(95,242,242,0.85)';
     ctx.font = '600 20px Rajdhani, sans-serif';
-    ctx.fillText('DOCUMENTO OFICIAL · POLICÍA NACIONAL', W/2, 130);
+    ctx.fillText('CENOP · MÓDULO DE FORMACIÓN DIGITAL', W/2, 120);
 
     ctx.save();
     ctx.shadowColor='rgba(95,242,242,0.7)'; ctx.shadowBlur=25;
     ctx.fillStyle='#eaf2ff'; ctx.font = '900 50px Orbitron, sans-serif';
-    ctx.fillText('CERTIFICADO DE APROBACIÓN', W/2, 210);
+    ctx.fillText('CERTIFICADO DE APROBACIÓN', W/2, 200);
     ctx.restore();
 
     ctx.fillStyle='#a78bfa'; ctx.font='600 22px Orbitron, sans-serif';
-    ctx.fillText('RESOLUCIÓN 04240 · 01 DIC 2025', W/2, 258);
+    ctx.fillText('RESOLUCIÓN 04240 · 01 DIC 2025', W/2, 248);
 
     ctx.fillStyle='#8fa1c7'; ctx.font='italic 19px Rajdhani, sans-serif';
-    wrapText(ctx, '"Modelo para el Uso Diferenciado y Proporcional de la Fuerza en la Policía Nacional"', W/2, 296, W-320, 25);
+    wrapText(ctx, '"Modelo para el Uso Diferenciado y Proporcional de la Fuerza en la Policía Nacional"', W/2, 286, W-320, 25);
 
     ctx.fillStyle='#dce6ff'; ctx.font='500 24px Rajdhani, sans-serif';
-    ctx.fillText('Se certifica que:', W/2, 395);
+    ctx.fillText('Se certifica que:', W/2, 375);
 
-    const nameGrad = ctx.createLinearGradient(W/2-320,0,W/2+320,0);
+    var nombreMayus = String(datos.nombre).toUpperCase();
+    ajustarTexto(ctx, nombreMayus, W-360, '700', 44, 'Orbitron, sans-serif');
+    var nameGrad = ctx.createLinearGradient(W/2-320,0,W/2+320,0);
     nameGrad.addColorStop(0,'#5ff2f2'); nameGrad.addColorStop(1,'#f26ce0');
     ctx.save();
     ctx.shadowColor='rgba(242,108,224,0.5)'; ctx.shadowBlur=20;
-    ctx.fillStyle=nameGrad; ctx.font='700 44px Orbitron, sans-serif';
-    ctx.fillText(name.toUpperCase(), W/2, 460);
+    ctx.fillStyle=nameGrad;
+    ctx.fillText(nombreMayus, W/2, 440);
     ctx.restore();
 
     ctx.strokeStyle='rgba(95,242,242,0.4)'; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(W/2-320,480); ctx.lineTo(W/2+320,480); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W/2-320,460); ctx.lineTo(W/2+320,460); ctx.stroke();
 
     ctx.fillStyle='#dce6ff'; ctx.font='500 21px Rajdhani, sans-serif';
-    ctx.fillText('Ha aprobado satisfactoriamente la evaluación de conocimientos', W/2, 535);
-    ctx.fillText('sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza', W/2, 565);
+    ctx.fillText('Ha aprobado satisfactoriamente la evaluación de conocimientos', W/2, 512);
+    ctx.fillText('sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza', W/2, 542);
+
+    ctx.fillStyle='#8fa1c7'; ctx.font='500 18px Rajdhani, sans-serif';
+    ctx.fillText('Resultado: ' + datos.score + ' / ' + datos.total + ' respuestas correctas   ·   Tiempo: ' + formatoTiempo(datos.segundos) + '   ·   Intento N° ' + datos.intentos, W/2, 585);
 
     ctx.save();
     ctx.shadowColor='rgba(124,255,203,0.6)'; ctx.shadowBlur=25;
     ctx.strokeStyle='rgba(124,255,203,0.7)'; ctx.lineWidth=4;
-    ctx.beginPath(); ctx.arc(W/2,660,70,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(W/2,655,62,0,Math.PI*2); ctx.stroke();
     ctx.restore();
 
-    ctx.fillStyle='#7CFFCB'; ctx.font='900 42px Orbitron, sans-serif';
-    ctx.fillText(percentage+'%', W/2, 675);
+    ctx.fillStyle='#7CFFCB'; ctx.font='900 40px Orbitron, sans-serif';
+    ctx.fillText(datos.percentage+'%', W/2, 670);
 
-    ctx.fillStyle='#8fa1c7'; ctx.font='500 18px Rajdhani, sans-serif';
-    ctx.fillText(score+' / '+total+' RESPUESTAS CORRECTAS', W/2, 755);
+    ctx.fillStyle='#8fa1c7'; ctx.font='500 16px Rajdhani, sans-serif';
+    ctx.fillText('NIVEL DE DOMINIO', W/2, 740);
 
-    const dateStr = new Date().toLocaleDateString('es-CO', {year:'numeric', month:'long', day:'numeric'});
-    ctx.fillStyle='#8fa1c7'; ctx.font='500 18px Rajdhani, sans-serif';
-    ctx.fillText('Fecha de expedición: '+dateStr, W/2, H-110);
+    /* espacios de firma */
+    ctx.strokeStyle='rgba(95,242,242,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(180,800); ctx.lineTo(560,800); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(840,800); ctx.lineTo(1220,800); ctx.stroke();
+    ctx.fillStyle='#8fa1c7'; ctx.font='500 15px Rajdhani, sans-serif';
+    ctx.fillText('FIRMA DEL INTERESADO', 370, 824);
+    ctx.fillText('FIRMA Y SELLO', 1030, 824);
 
-    ctx.fillStyle='#5ff2f2'; ctx.font='600 16px Orbitron, sans-serif';
-    ctx.fillText('SISTEMA DE EVALUACIÓN DIGITAL · POLICÍA NACIONAL DE COLOMBIA', W/2, H-75);
-  }
+    ctx.fillStyle='#8fa1c7'; ctx.font='500 17px Rajdhani, sans-serif';
+    ctx.fillText('Fecha de expedición: ' + fechaLarga(), W/2, 866);
 
-  function generateCertificateBlob(name, score, total, percentage, mode){
-    const canvas = document.getElementById('certCanvas');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    paintCertificate(ctx, W, H, name, score, total, percentage);
+    ctx.fillStyle='#5ff2f2'; ctx.font='600 15px Orbitron, sans-serif';
+    ctx.fillText('CÓDIGO DE VERIFICACIÓN: ' + datos.codigo, W/2, 896);
 
-    const fileName = 'Certificado_Resolucion04240_'+name.replace(/\s+/g,'_')+'.png';
-
-    canvas.toBlob(async (blob)=>{
-      if(!blob) return;
-
-      if(mode === 'share'){
-        const file = new File([blob], fileName, {type:'image/png'});
-        const shareData = {
-          files: [file],
-          title: 'Certificado Resolución 04240',
-          text: `He aprobado la evaluación sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza (Resolución 04240) con ${percentage}% de aciertos. 🏆`
-        };
-
-        if(navigator.canShare && navigator.canShare({files:[file]})){
-          try{
-            await navigator.share(shareData);
-            showToast('✅ Certificado compartido correctamente.');
-          }catch(err){
-            if(err.name !== 'AbortError'){
-              showToast('⚠️ No se pudo compartir. Se descargará en su lugar.');
-              downloadBlob(blob, fileName);
-            }
-          }
-        } else {
-          showToast('ℹ️ Tu navegador no soporta compartir archivos. Descargando certificado...');
-          downloadBlob(blob, fileName);
-        }
-      } else {
-        downloadBlob(blob, fileName);
-        showToast('✅ Certificado descargado correctamente.');
-      }
-    }, 'image/png');
+    ctx.fillStyle='#8fa1c7'; ctx.font='500 14px Rajdhani, sans-serif';
+    ctx.fillText('CENOP · IT. WILSON ROJAS - 2026 · Constancia de estudio interno, no sustituye documentos oficiales.', W/2, 928);
   }
 
   function downloadBlob(blob, fileName){
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    setTimeout(()=> URL.revokeObjectURL(url), 2000);
+    try{
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); link.remove(); }, 1500);
+      return true;
+    }catch(e){ return false; }
   }
+
+  function nombreArchivo(nombre){
+    return 'Certificado_Resolucion04240_' + String(nombre).replace(/[^\wáéíóúÁÉÍÓÚñÑ]+/g,'_') + '.png';
+  }
+
+  function generarCertificado(nombre, score, total, percentage, segundos, intentos, modo){
+    var canvas = document.getElementById('certCanvas');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var datos = {
+      nombre: nombre, score: score, total: total, percentage: percentage,
+      segundos: segundos || 0, intentos: intentos || 1, codigo: codigoVerificacion(nombre)
+    };
+
+    showToast('⏳ Generando certificado...');
+
+    esperarFuentes().then(function(){
+      paintCertificate(ctx, W, H, datos);
+
+      var terminar = function(blob){
+        if(!blob){ showToast('⚠ No se pudo generar la imagen del certificado.'); return; }
+        certBlobActual = blob;
+        certNombreActual = nombreArchivo(nombre);
+        certModoActual = modo || 'preview';
+
+        if(modo === 'share'){
+          compartirCertificado(blob, certNombreActual, percentage);
+          return;
+        }
+        if(modo === 'download'){
+          if(downloadBlob(blob, certNombreActual)) showToast('✅ Certificado descargado.');
+          else showToast('⚠ No se pudo descargar aquí. Ábrelo desde tu navegador.');
+          return;
+        }
+        /* vista previa */
+        var img = document.getElementById('certPreview');
+        try{
+          img.src = URL.createObjectURL(blob);
+        }catch(e){}
+        document.getElementById('certModalTitle').textContent = 'Certificado de ' + nombre;
+        document.getElementById('certModalSub').textContent = 'Código ' + datos.codigo + ' · Revísalo antes de descargarlo o compartirlo.';
+        certModal.classList.add('show');
+      };
+
+      if(canvas.toBlob){ canvas.toBlob(terminar, 'image/png'); }
+      else{
+        try{
+          var dataUrl = canvas.toDataURL('image/png');
+          var bin = atob(dataUrl.split(',')[1]);
+          var arr = new Uint8Array(bin.length);
+          for(var i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+          terminar(new Blob([arr], {type:'image/png'}));
+        }catch(e){ terminar(null); }
+      }
+    });
+  }
+
+  function compartirCertificado(blob, fileName, percentage){
+    var file;
+    try{ file = new File([blob], fileName, {type:'image/png'}); }catch(e){ file = null; }
+    var shareData = {
+      files: file ? [file] : undefined,
+      title: 'Certificado Resolución 04240',
+      text: 'He aprobado la evaluación sobre el Modelo para el Uso Diferenciado y Proporcional de la Fuerza (Resolución 04240) con ' + percentage + '% de aciertos. 🏆'
+    };
+    var puedeCompartir = file && navigator.canShare && navigator.canShare({files:[file]}) && navigator.share;
+    if(puedeCompartir){
+      navigator.share(shareData).then(function(){
+        showToast('✅ Certificado compartido.');
+      }).catch(function(err){
+        if(err && err.name === 'AbortError') return;
+        showToast('⚠ No se pudo compartir. Se descargará en su lugar.');
+        downloadBlob(blob, fileName);
+      });
+    }else{
+      showToast('ℹ Tu navegador no admite compartir archivos. Se descargará el certificado.');
+      downloadBlob(blob, fileName);
+    }
+  }
+
+  document.getElementById('certDownload2').addEventListener('click', function(){
+    if(!certBlobActual) return;
+    if(downloadBlob(certBlobActual, certNombreActual)) showToast('✅ Certificado descargado.');
+    else showToast('⚠ No se pudo descargar aquí. Ábrelo desde tu navegador.');
+  });
+  document.getElementById('certShare2').addEventListener('click', function(){
+    if(!certBlobActual) return;
+    compartirCertificado(certBlobActual, certNombreActual, store.get(LS_QUIZ_PERCENT) || '');
+  });
+  document.getElementById('certPrint').addEventListener('click', function(){
+    if(!certBlobActual){ showToast('⚠ Genera primero el certificado.'); return; }
+    try{
+      var url = URL.createObjectURL(certBlobActual);
+      var marco = document.createElement('iframe');
+      marco.style.position = 'fixed';
+      marco.style.right = '0'; marco.style.bottom = '0';
+      marco.style.width = '0'; marco.style.height = '0';
+      marco.style.border = '0';
+      marco.src = url;
+      marco.onload = function(){
+        try{
+          marco.contentWindow.focus();
+          marco.contentWindow.print();
+        }catch(e){
+          showToast('⚠ La impresión está bloqueada aquí. Descarga el certificado e imprímelo.');
+        }
+        setTimeout(function(){ URL.revokeObjectURL(url); marco.remove(); }, 60000);
+      };
+      document.body.appendChild(marco);
+      showToast('🖨 Abriendo la ventana de impresión...');
+    }catch(e){
+      showToast('⚠ La impresión está bloqueada aquí. Descarga el certificado e imprímelo.');
+    }
+  });
+
+  /* =========================================================
+     RESET · AYUDA · VOLVER ARRIBA · PARTÍCULAS
+  ========================================================= */
+  document.getElementById('resetProgressBtn').addEventListener('click', function(){
+    abrirConfirm({
+      icon:'⚠️', title:'¿Reiniciar todo el progreso?',
+      text:'Se borrará tu historial de lectura, los intentos, el mejor resultado y el nombre guardado. Esta acción no se puede deshacer.',
+      okLabel:'Sí, reiniciar',
+      onOk:function(){
+        ALL_KEYS.forEach(function(k){ store.del(k); });
+        showToast('✅ Progreso reiniciado. Recargando...');
+        setTimeout(function(){ location.reload(); }, 1000);
+      }
+    });
+  });
+
+  var helpModal = document.getElementById('helpModal');
+  document.getElementById('helpBtn').addEventListener('click', function(){ helpModal.classList.add('show'); });
+  document.getElementById('helpClose').addEventListener('click', function(){ helpModal.classList.remove('show'); });
+  helpModal.addEventListener('click', function(e){ if(e.target === helpModal) helpModal.classList.remove('show'); });
+
+  var toTop = document.getElementById('toTopBtn');
+  window.addEventListener('scroll', function(){
+    toTop.classList.toggle('show', window.pageYOffset > 500);
+  });
+  toTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth'});
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    cerrarConfirm();
+    helpModal.classList.remove('show');
+    cerrarCert();
+    cerrarResultados();
+  });
+
+  function crearParticulas(){
+    if(prefiereMenosMovimiento()) return;
+    var cont = document.getElementById('particles');
+    if(!cont) return;
+    var colores = ['#5ff2f2','#f26ce0','#a78bfa','#7dc4ff'];
+    var cantidad = window.innerWidth < 700 ? 18 : 34;
+    for(var i=0;i<cantidad;i++){
+      var p = document.createElement('div');
+      p.classList.add('particle');
+      var tam = Math.random()*4+2;
+      p.style.width = tam+'px';
+      p.style.height = tam+'px';
+      p.style.left = Math.random()*100+'vw';
+      var color = colores[Math.floor(Math.random()*colores.length)];
+      p.style.background = color;
+      p.style.animationDuration = (Math.random()*20+18)+'s';
+      p.style.animationDelay = (Math.random()*20)+'s';
+      p.style.boxShadow = '0 0 8px ' + color;
+      cont.appendChild(p);
+    }
+  }
+
+  /* =========================================================
+     ARRANQUE
+  ========================================================= */
+  function iniciar(){
+    construirNavTemas();
+    construirIndice();
+    observarTarjetas();
+    updateProgressUI();
+    actualizarTogglesLectura();
+    actualizarEstadisticasIntento();
+    renderRegistro();
+    crearParticulas();
+
+    /* recordar el nombre del evaluado en este equipo */
+    var campoNombre = document.getElementById('evalName');
+    var nombreGuardado = store.get(LS_EVAL_NAME) || store.get(LS_CERT_NAME) || '';
+    if(campoNombre && nombreGuardado) campoNombre.value = nombreGuardado;
+    if(campoNombre){
+      campoNombre.addEventListener('change', function(){
+        var v = String(campoNombre.value || '').trim();
+        if(v) store.set(LS_EVAL_NAME, v);
+      });
+    }
+    if(document.getElementById('quizContent').style.display !== 'none'){
+      prepararIntento();
+      renderQuiz();
+    }
+    if(!store.ok) document.getElementById('storageNote').classList.add('show');
+  }
+
+  try{
+    iniciar();
+  }catch(e){
+    /* si algo falla, al menos dejamos la página usable */
+    try{ document.getElementById('storageNote').classList.add('show'); }catch(e2){}
+  }
+})();
 </script>
 
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3ccf1ac3a9e0cd1',t:'MTc4OTY5ODc4Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
